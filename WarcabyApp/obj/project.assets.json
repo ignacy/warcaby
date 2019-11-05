@@ -13,11 +13,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/Users/ignacy/code/warcaby/warcaby.csproj",
-      "projectName": "warcaby",
-      "projectPath": "/Users/ignacy/code/warcaby/warcaby.csproj",
+      "projectUniqueName": "/Users/ignacy/code/warcaby/WarcabyApp/WarcabyApp.csproj",
+      "projectName": "WarcabyApp",
+      "projectPath": "/Users/ignacy/code/warcaby/WarcabyApp/WarcabyApp.csproj",
       "packagesPath": "/Users/ignacy/.nuget/packages/",
-      "outputPath": "/Users/ignacy/code/warcaby/obj/",
+      "outputPath": "/Users/ignacy/code/warcaby/WarcabyApp/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "/Users/ignacy/.nuget/NuGet/NuGet.Config"
