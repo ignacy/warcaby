@@ -53,7 +53,7 @@ namespace WarcabyApp.UnitTests.Services
       _board = new Board(4);
 
       Assert.Equal(
-                   _board.ToArray(),
+                   _board.Position,
                    new string[,] {
                      { "b", "w", "b", "w" },
                      { "w", "b", "w", "b" },

@@ -3,16 +3,20 @@ using System;
 namespace WarcabyApp
 {
   public enum FieldColor { White, Black };
+  public enum PawnColor { White, Black };
 
   public class Board
   {
 
     private readonly int DEFAULT_SIZE = 8;
     public int Size { get; }
+    public string[,] Position { get; }
 
     public Board()
     {
       this.Size = DEFAULT_SIZE;
+      this.Position = new string[this.Size, this.Size];
+      this.colorFields();
     }
 
     public Board(int n)
@@ -22,6 +26,12 @@ namespace WarcabyApp
         throw new System.ArgumentException("Valid board size is > 0");
       }
       this.Size = n;
+      this.Position = new string[this.Size, this.Size];
+      this.colorFields();
+    }
+
+    public void SetPownAt(int x, int y, PawnColor color) {
+
     }
 
     public FieldColor GetFieldColorAt(int x, int y)
@@ -38,27 +48,20 @@ namespace WarcabyApp
       } else {
         return FieldColor.Black;
       }
-
     }
 
-    public string[,] ToArray() {
-      string[,] position = new string[this.Size, this.Size];
-
+    public void colorFields() {
       for (int i = 0; i < this.Size; i++) {
         for (int j = 0; j < this.Size; j++) {
-          position[i, j] = (this.GetFieldColorAt(i, j) == FieldColor.White) ? "w" : "b";
+          this.Position[i, j] = (this.GetFieldColorAt(i, j) == FieldColor.White) ? "w" : "b";
         }
       }
-
-      return position;
     }
 
     public void PrintToOut() {
-      string[,] position = this.ToArray();
-
       for (int i = this.Size - 1; i >= 0; i--) {
         for (int j = 0; j < this.Size; j++) {
-          Console.Write(position[i,j]);
+          Console.Write(this.Position[i,j]);
           Console.Write("\t");
         }
 
