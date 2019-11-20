@@ -22,7 +22,6 @@ namespace WarcabyApp.UnitTests.Services
         public void BoardSizeIsAccepted(int size)
         {
             _board = new Board(size);
-            new Boar
             var actualSize = _board.Size;
             Assert.Equal(size, actualSize);
         }
