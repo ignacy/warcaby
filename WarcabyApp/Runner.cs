@@ -6,7 +6,10 @@ namespace WarcabyApp
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            Console.WriteLine("Welcome to Warcaby!!");
+
+            Console.WriteLine("Current board position:");
+
             var board = new Board(8);
             board.PrintToOut();
         }

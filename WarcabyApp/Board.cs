@@ -56,7 +56,7 @@ namespace WarcabyApp
     public void PrintToOut() {
       string[,] position = this.ToArray();
 
-      for (int i = 0; i < this.Size; i++) {
+      for (int i = this.Size - 1; i >= 0; i--) {
         for (int j = 0; j < this.Size; j++) {
           Console.Write(position[i,j]);
           Console.Write("\t");
