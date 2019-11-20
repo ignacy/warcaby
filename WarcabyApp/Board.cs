@@ -82,7 +82,7 @@ namespace WarcabyApp
             {
                 for (int j = 0; j < this.Size; j++)
                 {
-                    this.Position[i, j] = (this.GetFieldColorAt(i, j) == FieldColor.White) ? "w" : "b";
+                    this.Position[i, j] = (this.GetFieldColorAt(i, j) == FieldColor.White) ? "_" : ".";
                 }
             }
         }

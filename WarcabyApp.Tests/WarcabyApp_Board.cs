@@ -57,10 +57,10 @@ namespace WarcabyApp.UnitTests.Services
             Assert.Equal(
                          _board.Position,
                          new string[,] {
-                     { "b", "w", "b", "w" },
-                     { "w", "b", "w", "b" },
-                     { "b", "w", "b", "w" },
-                     { "w", "b", "w", "b" }
+                     { ".", "_", ".", "_" },
+                     { "_", ".", "_", "." },
+                     { ".", "_", ".", "_" },
+                     { "_", ".", "_", "." }
                          }
                          );
         }
