@@ -47,5 +47,23 @@ namespace WarcabyApp.UnitTests.Services
 
       Assert.Equal(_board.GetFieldColorAt(x, y), color);
     }
+
+    [Fact]
+    public void ReprezentsBoardAsArrayOfString() {
+      _board = new Board(4);
+
+      Assert.Equal(
+                   _board.ToArray(),
+                   new string[,] {
+                     { "b", "w", "b", "w" },
+                     { "w", "b", "w", "b" },
+                     { "b", "w", "b", "w" },
+                     { "w", "b", "w", "b" }
+                   }
+                   );
+
+
+
+    }
   }
 }

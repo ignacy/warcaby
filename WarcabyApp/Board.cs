@@ -1,3 +1,5 @@
+using System;
+
 namespace WarcabyApp
 {
   public enum FieldColor { White, Black };
@@ -37,6 +39,31 @@ namespace WarcabyApp
         return FieldColor.Black;
       }
 
+    }
+
+    public string[,] ToArray() {
+      string[,] position = new string[this.Size, this.Size];
+
+      for (int i = 0; i < this.Size; i++) {
+        for (int j = 0; j < this.Size; j++) {
+          position[i, j] = (this.GetFieldColorAt(i, j) == FieldColor.White) ? "w" : "b";
+        }
+      }
+
+      return position;
+    }
+
+    public void PrintToOut() {
+      string[,] position = this.ToArray();
+
+      for (int i = 0; i < this.Size; i++) {
+        for (int j = 0; j < this.Size; j++) {
+          Console.Write(position[i,j]);
+          Console.Write("\t");
+        }
+
+        Console.Write("\n");
+      }
     }
   }
 }
