@@ -67,9 +67,9 @@ namespace WarcabyApp.UnitTests.Services
 
 
       [Theory]
-      [InlineData(0, 0, PawnColor.White, "P")]
-      [InlineData(0, 0, PawnColor.Black, "p")]
-      [InlineData(1, 1, PawnColor.White, "P")]
+      [InlineData(0, 0, PawnColor.White, "W")]
+      [InlineData(0, 0, PawnColor.Black, "b")]
+      [InlineData(1, 1, PawnColor.White, "W")]
        public void CanSetAPawnOnTheBoard(int x, int y, PawnColor color, string expected) {
             _board = new Board(4);
             _board.SetPownAt(x, y, color);

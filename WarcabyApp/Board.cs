@@ -16,7 +16,8 @@ namespace WarcabyApp
         {
             this.Size = DEFAULT_SIZE;
             this.Position = new string[this.Size, this.Size];
-            this.colorFields();
+            this.ColorFields();
+            this.PlaceStartingPawns(3);
         }
 
         public Board(int n)
@@ -27,7 +28,7 @@ namespace WarcabyApp
             }
             this.Size = n;
             this.Position = new string[this.Size, this.Size];
-            this.colorFields();
+            this.ColorFields();
         }
 
         public void SetPownAt(int x, int y, PawnColor color)
@@ -40,18 +41,22 @@ namespace WarcabyApp
             {
                 throw new System.ArgumentException($"{y} is out of board bounds {this.Size}x{this.Size}");
             }
-            if (this.Position[x, y] == "P" || this.Position[x, y] == "p")
+            if (this.Position[x, y] == "W" || this.Position[x, y] == "b")
             {
                 throw new System.ArgumentException($"({x},{y}) is already occupied by {this.Position[x, y]}");
+            }
+            if (this.GetFieldColorAt(x, y) == FieldColor.White)
+            {
+              throw new System.ArgumentException($"({x},{y}) is white and pawns are allowed only on black fields");
             }
 
             if (color == PawnColor.White)
             {
-                this.Position[x, y] = "P";
+                this.Position[x, y] = "W";
             }
             else
             {
-                this.Position[x, y] = "p";
+                this.Position[x, y] = "b";
             }
         }
 
@@ -76,7 +81,7 @@ namespace WarcabyApp
             }
         }
 
-        public void colorFields()
+        public void ColorFields()
         {
             for (int i = 0; i < this.Size; i++)
             {
@@ -100,5 +105,22 @@ namespace WarcabyApp
                 Console.Write("\n");
             }
         }
+
+      public void PlaceStartingPawns(int rows) {
+        for (int i = this.Size - 1; i >= this.Size - rows; i--) {
+          for (int j = 0; j < this.Size; j++) {
+            if (this.GetFieldColorAt(i, j) == FieldColor.Black) {
+              this.SetPownAt(i, j, PawnColor.Black);
+          }
+        }
+        }
+        for (int i = 0; i <= rows - 1; i++) {
+            for (int j = 0; j < this.Size; j++) {
+              if (this.GetFieldColorAt(i, j) == FieldColor.Black) {
+                this.SetPownAt(i, j, PawnColor.White);
+              }
+            }
+          }
+      }
     }
 }

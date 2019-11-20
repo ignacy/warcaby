@@ -10,7 +10,7 @@ namespace WarcabyApp
 
             Console.WriteLine("Current board position:");
 
-            var board = new Board(8);
+            var board = new Board();
             board.PrintToOut();
         }
     }
