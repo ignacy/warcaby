@@ -66,41 +66,59 @@ namespace WarcabyApp.UnitTests.Services
         }
 
 
-      [Theory]
-      [InlineData(0, 0, PawnColor.White, "W")]
-      [InlineData(0, 0, PawnColor.Black, "b")]
-      [InlineData(1, 1, PawnColor.White, "W")]
-       public void CanSetAPawnOnTheBoard(int x, int y, PawnColor color, string expected) {
+        [Theory]
+        [InlineData(0, 0, PawnColor.White, "W")]
+        [InlineData(0, 0, PawnColor.Black, "b")]
+        [InlineData(1, 1, PawnColor.White, "W")]
+        public void CanSetAPawnOnTheBoard(int x, int y, PawnColor color, string expected)
+        {
             _board = new Board(4);
             _board.SetPownAt(x, y, color);
             Assert.Equal(expected, _board.Position[x, y]);
-      }
+        }
 
-      [Theory]
-      [InlineData(0, 1, PawnColor.White)]
-      [InlineData(1, 2, PawnColor.Black)]
-      public void RaisesErrorWhenFieldIsWhite(int x, int y, PawnColor color) {
-        _board = new Board(4);
-        Assert.Throws<System.ArgumentException>(() => _board.SetPownAt(x, y, color));
-      }
+        [Theory]
+        [InlineData(0, 1, PawnColor.White)]
+        [InlineData(1, 2, PawnColor.Black)]
+        public void RaisesErrorWhenFieldIsWhite(int x, int y, PawnColor color)
+        {
+            _board = new Board(4);
+            Assert.Throws<System.ArgumentException>(() => _board.SetPownAt(x, y, color));
+        }
 
-      [Fact]
-      public void KnowsHowToCountScoreForTheStartingPosition() {
-        _board = new Board(); // regular 8 by 8 with 3 lines of pawns
-        Assert.Equal(_board.Score(PawnColor.White), 12);
-        Assert.Equal(_board.Score(PawnColor.Black), 12);
-      }
+        [Fact]
+        public void KnowsHowToCountScoreForTheStartingPosition()
+        {
+            _board = new Board(); // regular 8 by 8 with 3 lines of pawns
+            Assert.Equal(_board.Score(PawnColor.White), 12);
+            Assert.Equal(_board.Score(PawnColor.Black), 12);
+        }
 
-      [Fact]
-      public void BuildsMoreComplicatedPositionAndCountsTheScore() {
-          _board = new Board(6);
-          _board.SetPownAt(1,1, PawnColor.White);
-          _board.SetPownAt(3,1, PawnColor.White);
-          _board.SetPownAt(3,3, PawnColor.Black);
-          _board.SetPownAt(4,4, PawnColor.Black);
-          _board.SetPownAt(3,5, PawnColor.Black);
-          Assert.Equal(_board.Score(PawnColor.White), 2);
-          Assert.Equal(_board.Score(PawnColor.Black), 3);
-      }
+        [Fact]
+        public void BuildsMoreComplicatedPositionAndCountsTheScore()
+        {
+            _board = new Board(6);
+            _board.SetPownAt(1, 1, PawnColor.White);
+            _board.SetPownAt(3, 1, PawnColor.White);
+            _board.SetPownAt(3, 3, PawnColor.Black);
+            _board.SetPownAt(4, 4, PawnColor.Black);
+            _board.SetPownAt(3, 5, PawnColor.Black);
+            Assert.Equal(_board.Score(PawnColor.White), 2);
+            Assert.Equal(_board.Score(PawnColor.Black), 3);
+        }
+
+        [Fact]
+        public void GetValidMovesForAPawnInTheCorner()
+        {
+            _board = new Board(2);
+            _board.SetPownAt(0, 0, PawnColor.White);
+            Assert.Equal(
+                _board.MovesFor(0, 0),
+                new int[][] {
+                    new int[] {1,1}
+                }
+            );
+
+        }
     }
 }

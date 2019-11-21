@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 
 namespace WarcabyApp
 {
@@ -47,7 +48,7 @@ namespace WarcabyApp
             }
             if (this.GetFieldColorAt(x, y) == FieldColor.White)
             {
-              throw new System.ArgumentException($"({x},{y}) is white and pawns are allowed only on black fields");
+                throw new System.ArgumentException($"({x},{y}) is white and pawns are allowed only on black fields");
             }
 
             if (color == PawnColor.White)
@@ -106,37 +107,70 @@ namespace WarcabyApp
             }
         }
 
-      public int Score(PawnColor color) {
-        int score = 0;
+        public int Score(PawnColor color)
+        {
+            int score = 0;
 
-        for (int i = 0; i < this.Size; i++) {
-          for (int j = 0; j < this.Size; j++) {
-              if (this.Position[i, j] == "W" && color == PawnColor.White) {
-                  score += 1;
-              } else if (this.Position[i, j] == "b" && color == PawnColor.Black) {
-                  score += 1;
-              }
-          }
-        }
-
-        return score;
-      }
-
-      public void PlaceStartingPawns(int rows) {
-        for (int i = this.Size - 1; i >= this.Size - rows; i--) {
-          for (int j = 0; j < this.Size; j++) {
-            if (this.GetFieldColorAt(i, j) == FieldColor.Black) {
-              this.SetPownAt(i, j, PawnColor.Black);
-          }
-        }
-        }
-        for (int i = 0; i <= rows - 1; i++) {
-            for (int j = 0; j < this.Size; j++) {
-              if (this.GetFieldColorAt(i, j) == FieldColor.Black) {
-                this.SetPownAt(i, j, PawnColor.White);
-              }
+            for (int i = 0; i < this.Size; i++)
+            {
+                for (int j = 0; j < this.Size; j++)
+                {
+                    if (this.Position[i, j] == "W" && color == PawnColor.White)
+                    {
+                        score += 1;
+                    }
+                    else if (this.Position[i, j] == "b" && color == PawnColor.Black)
+                    {
+                        score += 1;
+                    }
+                }
             }
-          }
-      }
+
+            return score;
+        }
+
+        public int[][] MovesFor(int x, int y) {
+           int[][] possible = {
+               new int[] { x - 1, y - 1 },
+               new int[] { x - 1, y + 1 },
+               new int[] { x + 1, y + 1 },
+               new int[] { x + 1, y - 1 }
+           };
+
+
+            var moves = from pair in possible
+                        where (this.IsInBounds(pair[0], pair[1]) && this.GetFieldColorAt(pair[0], pair[1]) == FieldColor.Black)
+                        select pair;
+
+            return moves.ToArray();
+        }
+
+        public bool IsInBounds(int x, int y) {
+            return (x >= 0 && x < this.Size) && (y >= 0 && y < this.Size);
+        }
+
+        public void PlaceStartingPawns(int rows)
+        {
+            for (int i = this.Size - 1; i >= this.Size - rows; i--)
+            {
+                for (int j = 0; j < this.Size; j++)
+                {
+                    if (this.GetFieldColorAt(i, j) == FieldColor.Black)
+                    {
+                        this.SetPownAt(i, j, PawnColor.Black);
+                    }
+                }
+            }
+            for (int i = 0; i <= rows - 1; i++)
+            {
+                for (int j = 0; j < this.Size; j++)
+                {
+                    if (this.GetFieldColorAt(i, j) == FieldColor.Black)
+                    {
+                        this.SetPownAt(i, j, PawnColor.White);
+                    }
+                }
+            }
+        }
     }
 }
