@@ -106,6 +106,22 @@ namespace WarcabyApp
             }
         }
 
+      public int Score(PawnColor color) {
+        int score = 0;
+
+        for (int i = 0; i < this.Size; i++) {
+          for (int j = 0; j < this.Size; j++) {
+              if (this.Position[i, j] == "W" && color == PawnColor.White) {
+                  score += 1;
+              } else if (this.Position[i, j] == "b" && color == PawnColor.Black) {
+                  score += 1;
+              }
+          }
+        }
+
+        return score;
+      }
+
       public void PlaceStartingPawns(int rows) {
         for (int i = this.Size - 1; i >= this.Size - rows; i--) {
           for (int j = 0; j < this.Size; j++) {

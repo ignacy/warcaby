@@ -83,5 +83,12 @@ namespace WarcabyApp.UnitTests.Services
         _board = new Board(4);
         Assert.Throws<System.ArgumentException>(() => _board.SetPownAt(x, y, color));
       }
+
+      [Fact]
+      public void KnowsHowToCountScoreForTheStartingPosition() {
+        _board = new Board(); // regular 8 by 8 with 3 lines of pawns
+        Assert.Equal(_board.Score(PawnColor.White), 12);
+        Assert.Equal(_board.Score(PawnColor.Black), 12);
+      }
     }
 }
