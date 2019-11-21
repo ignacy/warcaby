@@ -75,5 +75,13 @@ namespace WarcabyApp.UnitTests.Services
             _board.SetPownAt(x, y, color);
             Assert.Equal(expected, _board.Position[x, y]);
       }
+
+      [Theory]
+      [InlineData(0, 1, PawnColor.White)]
+      [InlineData(1, 2, PawnColor.Black)]
+      public void RaisesErrorWhenFieldIsWhite(int x, int y, PawnColor color) {
+        _board = new Board(4);
+        Assert.Throws<System.ArgumentException>(() => _board.SetPownAt(x, y, color));
+      }
     }
 }
