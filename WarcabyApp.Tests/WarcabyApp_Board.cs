@@ -90,5 +90,17 @@ namespace WarcabyApp.UnitTests.Services
         Assert.Equal(_board.Score(PawnColor.White), 12);
         Assert.Equal(_board.Score(PawnColor.Black), 12);
       }
+
+      [Fact]
+      public void BuildsMoreComplicatedPositionAndCountsTheScore() {
+          _board = new Board(6);
+          _board.SetPownAt(1,1, PawnColor.White);
+          _board.SetPownAt(3,1, PawnColor.White);
+          _board.SetPownAt(3,3, PawnColor.Black);
+          _board.SetPownAt(4,4, PawnColor.Black);
+          _board.SetPownAt(3,5, PawnColor.Black);
+          Assert.Equal(_board.Score(PawnColor.White), 2);
+          Assert.Equal(_board.Score(PawnColor.Black), 3);
+      }
     }
 }
