@@ -10,7 +10,7 @@ namespace WarcabyApp
     {
         private readonly int DEFAULT_SIZE = 8;
         public int Size { get; }
-        public string[,] Position { get; }
+        public string[,] Position { get; set; }
 
         public Board()
         {
