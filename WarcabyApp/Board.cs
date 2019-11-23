@@ -130,6 +130,10 @@ namespace WarcabyApp
         }
 
         public int[][] MovesFor(int x, int y) {
+            if (!this.IsInBounds(x, y) || !this.IsTaken(x, y)) {
+                return new int[][] { new int[] {} };
+            }
+
            int[][] possible = {
                new int[] { x - 1, y - 1 },
                new int[] { x - 1, y + 1 },
@@ -147,6 +151,10 @@ namespace WarcabyApp
 
         public bool IsInBounds(int x, int y) {
             return (x >= 0 && x < this.Size) && (y >= 0 && y < this.Size);
+        }
+
+        public bool IsTaken(int x, int y) {
+            return this.Position[x, y] == "W" || this.Position[x, y] == "b";
         }
 
         public void PlaceStartingPawns(int rows)
