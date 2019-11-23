@@ -80,6 +80,15 @@ namespace WarcabyApp
                         )
                         select pair;
 
+
+            foreach (var pair in moves) {
+                if (this.CanCapture(x, y, pair[0], pair[1])) {
+                    var newCoordinates = this.FindCapture(x, y, pair[0], pair[1]);
+                    pair[0] = newCoordinates[0];
+                    pair[1] = newCoordinates[1];
+                }
+            }
+
             return moves.ToArray();
         }
 
@@ -180,15 +189,32 @@ namespace WarcabyApp
             return this.Position[x, y] == "W" || this.Position[x, y] == "b";
         }
 
+
+        private int[] FindCapture(int x, int y, int ox, int oy) {
+            if (!this.IsInBounds(ox, oy) || !this.IsTaken(ox, oy)) {
+                return new int[] {};
+            }
+
+            var possbile = this.NextMovesFieldsOnTheBoard(ox, oy);
+            var possibleFromOXOY = from pair in possbile
+                        where (
+                            (pair[0] != x && pair[1] != y) && (pair[1] > oy) && (pair[0] != x)
+                        )
+                        select pair;
+
+            var asArray = possibleFromOXOY.ToArray();
+            if (asArray.Length == 0) {
+                return new int[] {};
+            } else {
+                return asArray[0];
+            }
+        }
+
         private bool CanCapture(int x, int y, int ox, int oy) {
             if (!this.IsInBounds(ox, oy) || !this.IsTaken(ox, oy)) {
                 return false;
             }
-
-            var possibleFromOXOY = this.NextMovesFieldsOnTheBoard(ox, oy);
-            // possibleFromOXOY = possibleFromOXOY.Where((pair, index) => pair[0] != x && pair[1] != y);
-
-            return possibleFromOXOY.Length > 0;
+            return this.FindCapture(x, y, ox, oy).Length > 0;
         }
 
         /**

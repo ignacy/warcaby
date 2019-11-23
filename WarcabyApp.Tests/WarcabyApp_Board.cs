@@ -155,8 +155,8 @@ namespace WarcabyApp.UnitTests.Services
       Assert.Equal(
                    _board.MovesFor(3, 3),
                    new int[][] {
-                     new int[] {4, 4},
-                     new int[] {4, 2}
+                     new int[] {1, 5},
+                     new int[] {4, 4}
                    }
                   );
     }
