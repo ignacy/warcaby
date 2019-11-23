@@ -175,14 +175,20 @@ namespace WarcabyApp
 
         return reversed;
     } 
-        public void PrintToOut()
+        public void PrintToOut(bool showCoordinates = false)
         {
             var rotated = this.rotateMatrix();
             for (int i = 0; i < this.Size; i++)
             {
                 for (int j = 0; j < this.Size; j++)
                 {
-                    Console.Write($"{i},{j} = {rotated[i, j]}");
+
+                    if (showCoordinates) {
+                        Console.Write($"{i},{j} = {rotated[i, j]}");
+                    } else {
+                        Console.Write(rotated[i, j]);
+                    }
+
                     Console.Write("\t");
                 }
 
@@ -252,9 +258,9 @@ namespace WarcabyApp
           **/
         private void PlaceStartingPawns(int rows)
         {
-            for (int i = this.Size - 1; i >= this.Size - rows; i--)
+            for (int i = 0; i < this.Size; i++)
             {
-                for (int j = 0; j < this.Size; j++)
+                for (int j = this.Size - 1; j >= this.Size - rows; j--)
                 {
                     if (this.GetFieldColorAt(i, j) == FieldColor.Black)
                     {
@@ -262,9 +268,9 @@ namespace WarcabyApp
                     }
                 }
             }
-            for (int i = 0; i <= rows - 1; i++)
+            for (int i = 0; i < this.Size; i++)
             {
-                for (int j = 0; j < this.Size; j++)
+                for (int j = 0; j < rows; j++)
                 {
                     if (this.GetFieldColorAt(i, j) == FieldColor.Black)
                     {
