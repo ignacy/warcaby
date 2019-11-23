@@ -61,28 +61,47 @@ namespace WarcabyApp
             }
         }
 
+        /**
+          * Only returns valid moves for a pawn at (x,y)
+          **/
         public int[][] MovesFor(int x, int y) {
             if (!this.IsInBounds(x, y) || !this.IsTaken(x, y)) {
                 return new int[][] { new int[] {} };
             }
 
-           int[][] possible = {
-               new int[] { x - 1, y - 1 },
-               new int[] { x - 1, y + 1 },
-               new int[] { x + 1, y + 1 },
-               new int[] { x + 1, y - 1 }
-           };
-
+            int[][] possible = this.NextMovesFieldsOnTheBoard(x, y);
 
             var moves = from pair in possible
                         where (
                             this.IsInBounds(pair[0], pair[1]) && 
                             this.GetFieldColorAt(pair[0], pair[1]) == FieldColor.Black &&
-                            !this.IsTaken(pair[0], pair[1])
+                            (!this.IsTaken(pair[0], pair[1]) || 
+                            (this.IsTaken(pair[0], pair[1]) && this.CanCapture(x, y, pair[0], pair[1])))
                         )
                         select pair;
 
             return moves.ToArray();
+        }
+
+        /**
+          * Returna all possible squares a move can be made to from (x,y)
+          * Does not check game rules (field needs to be black and on the board)
+          * does not care about pices, captures, etc.
+          **/
+        private int[][] NextMovesFieldsOnTheBoard(int x, int y) {
+            int[][] possible = {
+               new int[] { x - 1, y + 1 },
+               new int[] { x + 1, y + 1 }
+           };
+
+            var moves = from pair in possible
+                        where (
+                            this.IsInBounds(pair[0], pair[1]) && 
+                            this.GetFieldColorAt(pair[0], pair[1]) == FieldColor.Black
+                        )
+                        select pair;
+
+            return moves.ToArray();         
         }
 
         public FieldColor GetFieldColorAt(int x, int y)
@@ -159,6 +178,17 @@ namespace WarcabyApp
 
         private bool IsTaken(int x, int y) {
             return this.Position[x, y] == "W" || this.Position[x, y] == "b";
+        }
+
+        private bool CanCapture(int x, int y, int ox, int oy) {
+            if (!this.IsInBounds(ox, oy) || !this.IsTaken(ox, oy)) {
+                return false;
+            }
+
+            var possibleFromOXOY = this.NextMovesFieldsOnTheBoard(ox, oy);
+            // possibleFromOXOY = possibleFromOXOY.Where((pair, index) => pair[0] != x && pair[1] != y);
+
+            return possibleFromOXOY.Length > 0;
         }
 
         /**

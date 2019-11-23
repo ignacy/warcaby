@@ -140,16 +140,14 @@ namespace WarcabyApp.UnitTests.Services
       Assert.Equal(
                    _board.MovesFor(3, 3),
                    new int[][] {
-                     new int[] {2, 2},
                      new int[] {2, 4},
-                     new int[] {4, 4},
-                     new int[] {4, 2}
+                     new int[] {4, 4}
                    }
                   );
     }
 
     [Fact]
-    public void GetValidMovesForAPawnExcludesFieldsOccupiedByOtherPowns() {
+    public void GetValidMovesRecognizesCaptures() {
       _board = new Board(8);
       _board.SetPawnAt(3, 3, PawnColor.White);
       _board.SetPawnAt(2, 2, PawnColor.Black);
@@ -162,6 +160,5 @@ namespace WarcabyApp.UnitTests.Services
                    }
                   );
     }
-
   }
 }
