@@ -145,7 +145,21 @@ namespace WarcabyApp.UnitTests.Services
                      new int[] {4, 4},
                      new int[] {4, 2}
                    }
+                  );
+    }
 
+    [Fact]
+    public void GetValidMovesForAPawnExcludesFieldsOccupiedByOtherPowns() {
+      _board = new Board(8);
+      _board.SetPawnAt(3, 3, PawnColor.White);
+      _board.SetPawnAt(2, 2, PawnColor.Black);
+      _board.SetPawnAt(2, 4, PawnColor.Black);
+      Assert.Equal(
+                   _board.MovesFor(3, 3),
+                   new int[][] {
+                     new int[] {4, 4},
+                     new int[] {4, 2}
+                   }
                   );
     }
 

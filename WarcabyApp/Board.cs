@@ -75,12 +75,15 @@ namespace WarcabyApp
 
 
             var moves = from pair in possible
-                        where (this.IsInBounds(pair[0], pair[1]) && this.GetFieldColorAt(pair[0], pair[1]) == FieldColor.Black)
+                        where (
+                            this.IsInBounds(pair[0], pair[1]) && 
+                            this.GetFieldColorAt(pair[0], pair[1]) == FieldColor.Black &&
+                            !this.IsTaken(pair[0], pair[1])
+                        )
                         select pair;
 
             return moves.ToArray();
         }
-
 
         public FieldColor GetFieldColorAt(int x, int y)
         {
@@ -149,7 +152,6 @@ namespace WarcabyApp
 
             return score;
         }
-
 
         private bool IsInBounds(int x, int y) {
             return (x >= 0 && x < this.Size) && (y >= 0 && y < this.Size);
