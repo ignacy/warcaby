@@ -32,7 +32,7 @@ namespace WarcabyApp
             this.ColorFields();
         }
 
-        public void SetPownAt(int x, int y, PawnColor color)
+        public void SetPawnAt(int x, int y, PawnColor color)
         {
             if (x > this.Size - 1)
             {
@@ -165,7 +165,7 @@ namespace WarcabyApp
                 {
                     if (this.GetFieldColorAt(i, j) == FieldColor.Black)
                     {
-                        this.SetPownAt(i, j, PawnColor.Black);
+                        this.SetPawnAt(i, j, PawnColor.Black);
                     }
                 }
             }
@@ -175,7 +175,7 @@ namespace WarcabyApp
                 {
                     if (this.GetFieldColorAt(i, j) == FieldColor.Black)
                     {
-                        this.SetPownAt(i, j, PawnColor.White);
+                        this.SetPawnAt(i, j, PawnColor.White);
                     }
                 }
             }
