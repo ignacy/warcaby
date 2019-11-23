@@ -61,6 +61,27 @@ namespace WarcabyApp
             }
         }
 
+        public int[][] MovesFor(int x, int y) {
+            if (!this.IsInBounds(x, y) || !this.IsTaken(x, y)) {
+                return new int[][] { new int[] {} };
+            }
+
+           int[][] possible = {
+               new int[] { x - 1, y - 1 },
+               new int[] { x - 1, y + 1 },
+               new int[] { x + 1, y + 1 },
+               new int[] { x + 1, y - 1 }
+           };
+
+
+            var moves = from pair in possible
+                        where (this.IsInBounds(pair[0], pair[1]) && this.GetFieldColorAt(pair[0], pair[1]) == FieldColor.Black)
+                        select pair;
+
+            return moves.ToArray();
+        }
+
+
         public FieldColor GetFieldColorAt(int x, int y)
         {
             if (x > this.Size - 1)
@@ -82,7 +103,7 @@ namespace WarcabyApp
             }
         }
 
-        public void ColorFields()
+        private void ColorFields()
         {
             for (int i = 0; i < this.Size; i++)
             {
@@ -129,35 +150,19 @@ namespace WarcabyApp
             return score;
         }
 
-        public int[][] MovesFor(int x, int y) {
-            if (!this.IsInBounds(x, y) || !this.IsTaken(x, y)) {
-                return new int[][] { new int[] {} };
-            }
 
-           int[][] possible = {
-               new int[] { x - 1, y - 1 },
-               new int[] { x - 1, y + 1 },
-               new int[] { x + 1, y + 1 },
-               new int[] { x + 1, y - 1 }
-           };
-
-
-            var moves = from pair in possible
-                        where (this.IsInBounds(pair[0], pair[1]) && this.GetFieldColorAt(pair[0], pair[1]) == FieldColor.Black)
-                        select pair;
-
-            return moves.ToArray();
-        }
-
-        public bool IsInBounds(int x, int y) {
+        private bool IsInBounds(int x, int y) {
             return (x >= 0 && x < this.Size) && (y >= 0 && y < this.Size);
         }
 
-        public bool IsTaken(int x, int y) {
+        private bool IsTaken(int x, int y) {
             return this.Position[x, y] == "W" || this.Position[x, y] == "b";
         }
 
-        public void PlaceStartingPawns(int rows)
+        /**
+          * rows - how many rows are occupied by pawns [ in 8 x 8 case there are 3 rows of pawns]
+          **/
+        private void PlaceStartingPawns(int rows)
         {
             for (int i = this.Size - 1; i >= this.Size - rows; i--)
             {
