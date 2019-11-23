@@ -1,3 +1,4 @@
+using System;
 using Xunit;
 using WarcabyApp;
 
@@ -159,6 +160,44 @@ namespace WarcabyApp.UnitTests.Services
                      new int[] {4, 4}
                    }
                   );
+    }
+
+    [Fact]
+    public void KnowsHowToMakeAMove() {
+      _board = new Board(6);
+      _board.SetPawnAt(3, 3, PawnColor.White);
+      _board.SetPawnAt(2, 2, PawnColor.Black);
+      _board.SetPawnAt(2, 4, PawnColor.Black);
+      var nextMove = _board.MovesFor(3, 3)[0];
+
+       Assert.Equal(
+                   _board.rotateMatrix(),
+                   new string[,] {
+                     { "_", ".", "_", ".", "_", "." },
+                     { ".", "_", "b", "_", ".", "_" },
+                     { "_", ".", "_", "W", "_", "." },
+                     { ".", "_", "b", "_", ".", "_" },
+                     { "_", ".", "_", ".", "_", "." },
+                     { ".", "_", ".", "_", ".", "_" },
+                   }
+                   );
+ 
+      _board.MakeMove(3, 3, nextMove[0], nextMove[1]);
+
+       Assert.Equal(
+                   _board.rotateMatrix(),
+                   new string[,] {
+                     { "_", "W", "_", ".", "_", "." },
+                     { ".", "_", ".", "_", ".", "_" },
+                     { "_", ".", "_", ".", "_", "." },
+                     { ".", "_", "b", "_", ".", "_" },
+                     { "_", ".", "_", ".", "_", "." },
+                     { ".", "_", ".", "_", ".", "_" }
+                   }
+                   );
+    
+
+ 
     }
   }
 }

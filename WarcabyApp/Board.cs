@@ -8,7 +8,6 @@ namespace WarcabyApp
 
     public class Board
     {
-
         private readonly int DEFAULT_SIZE = 8;
         public int Size { get; }
         public string[,] Position { get; }
@@ -113,6 +112,18 @@ namespace WarcabyApp
             return moves.ToArray();         
         }
 
+        public void MakeMove(int startX, int startY, int endX, int endY) {
+            var piece = this.Position[startX, startY];
+            this.Position[startX, startY] = "."; // There was a piece here so black
+            this.Position[endX, endY] = piece;
+
+            // Handle capture
+            if (endY > startY + 1) {
+                var nextX = (endX < startX) ? (startX-1) : (startX+1);
+                this.Position[nextX, startY + 1] = ".";
+            }
+        }
+
         public FieldColor GetFieldColorAt(int x, int y)
         {
             if (x > this.Size - 1)
@@ -145,13 +156,33 @@ namespace WarcabyApp
             }
         }
 
+        public string[,] rotateMatrix() {
+            var reversed = new string[this.Size, this.Size];
+            var N = this.Size;
+        for (int x = 0; x < N / 2; x++) 
+        { 
+            for (int y = x; y < N - x - 1; y++) 
+            { 
+                var temp = this.Position[x, y]; 
+                reversed[x, y] = this.Position[y, N - 1 - x]; 
+                reversed[y, N - 1 - x] = this.Position[N - 1 - x,  
+                                        N - 1 - y]; 
+                reversed[N - 1 - x,  
+                    N - 1 - y] = this.Position[N - 1 - y, x]; 
+                reversed[N - 1 - y, x] = temp; 
+            } 
+        } 
+
+        return reversed;
+    } 
         public void PrintToOut()
         {
-            for (int i = this.Size - 1; i >= 0; i--)
+            var rotated = this.rotateMatrix();
+            for (int i = 0; i < this.Size; i++)
             {
                 for (int j = 0; j < this.Size; j++)
                 {
-                    Console.Write(this.Position[i, j]);
+                    Console.Write($"{i},{j} = {rotated[i, j]}");
                     Console.Write("\t");
                 }
 
@@ -159,7 +190,7 @@ namespace WarcabyApp
             }
         }
 
-        public int Score(PawnColor color)
+       public int Score(PawnColor color)
         {
             int score = 0;
 
@@ -188,7 +219,6 @@ namespace WarcabyApp
         private bool IsTaken(int x, int y) {
             return this.Position[x, y] == "W" || this.Position[x, y] == "b";
         }
-
 
         private int[] FindCapture(int x, int y, int ox, int oy) {
             if (!this.IsInBounds(ox, oy) || !this.IsTaken(ox, oy)) {
