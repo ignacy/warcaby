@@ -47,7 +47,7 @@ namespace WarcabyApp.UnitTests.Services
     {
       _board = new Board(8);
 
-      Assert.Equal(_board.GetFieldColorAt(x, y), color);
+      Assert.Equal(new Field(x, y).Color(), color);
     }
 
     [Fact]
@@ -74,7 +74,7 @@ namespace WarcabyApp.UnitTests.Services
     public void CanSetAPawnOnTheBoard(int x, int y, PawnColor color, string expected)
     {
       _board = new Board(4);
-      _board.SetPawnAt(x, y, color);
+      _board.SetPawnAt(new Field(x, y), color);
       Assert.Equal(expected, _board.Position[x, y]);
     }
 
@@ -84,7 +84,7 @@ namespace WarcabyApp.UnitTests.Services
     public void RaisesErrorWhenFieldIsWhite(int x, int y, PawnColor color)
     {
       _board = new Board(4);
-      Assert.Throws<System.ArgumentException>(() => _board.SetPawnAt(x, y, color));
+      Assert.Throws<System.ArgumentException>(() => _board.SetPawnAt(new Field(x, y), color));
     }
 
     [Fact]
@@ -99,11 +99,11 @@ namespace WarcabyApp.UnitTests.Services
     public void BuildsMoreComplicatedPositionAndCountsTheScore()
     {
       _board = new Board(6);
-      _board.SetPawnAt(1, 1, PawnColor.White);
-      _board.SetPawnAt(3, 1, PawnColor.White);
-      _board.SetPawnAt(3, 3, PawnColor.Black);
-      _board.SetPawnAt(4, 4, PawnColor.Black);
-      _board.SetPawnAt(3, 5, PawnColor.Black);
+      _board.SetPawnAt(new Field(1, 1), PawnColor.White);
+      _board.SetPawnAt(new Field(3, 1), PawnColor.White);
+      _board.SetPawnAt(new Field(3, 3), PawnColor.Black);
+      _board.SetPawnAt(new Field(4, 4), PawnColor.Black);
+      _board.SetPawnAt(new Field(3, 5), PawnColor.Black);
       Assert.Equal(_board.Score(PawnColor.White), 2);
       Assert.Equal(_board.Score(PawnColor.Black), 3);
     }
@@ -112,7 +112,7 @@ namespace WarcabyApp.UnitTests.Services
     public void IfTheFieldIsEmptyThereAreNoValidMoves() {
         _board = new Board(2);
         Assert.Equal(
-            _board.MovesFor(0, 0),
+            _board.MovesFor(new Field(0, 0)),
             new int[][] {
                 new int[] {}
             }
@@ -123,9 +123,10 @@ namespace WarcabyApp.UnitTests.Services
     public void GetValidMovesForAPawnInTheCorner()
     {
       _board = new Board(2);
-      _board.SetPawnAt(0, 0, PawnColor.White);
+      var _field = new Field(0, 0);
+      _board.SetPawnAt(_field, PawnColor.White);
       Assert.Equal(
-                   _board.MovesFor(0, 0),
+                   _board.MovesFor(_field),
                    new int[][] {
                      new int[] {1,1}
                    }
@@ -137,9 +138,10 @@ namespace WarcabyApp.UnitTests.Services
     public void GetValidMovesForAPawnInTheCenter()
     {
       _board = new Board(8);
-      _board.SetPawnAt(3, 3, PawnColor.White);
+      var _field = new Field(3, 3);
+      _board.SetPawnAt(_field, PawnColor.White);
       Assert.Equal(
-                   _board.MovesFor(3, 3),
+                   _board.MovesFor(_field),
                    new int[][] {
                      new int[] {2, 4},
                      new int[] {4, 4}
@@ -150,11 +152,12 @@ namespace WarcabyApp.UnitTests.Services
     [Fact]
     public void GetValidMovesRecognizesCaptures() {
       _board = new Board(8);
-      _board.SetPawnAt(3, 3, PawnColor.White);
-      _board.SetPawnAt(2, 2, PawnColor.Black);
-      _board.SetPawnAt(2, 4, PawnColor.Black);
+      var _field = new Field(3, 3);
+      _board.SetPawnAt(_field, PawnColor.White);
+      _board.SetPawnAt(new Field(2, 2), PawnColor.Black);
+      _board.SetPawnAt(new Field(2, 4), PawnColor.Black);
       Assert.Equal(
-                   _board.MovesFor(3, 3),
+                   _board.MovesFor(_field),
                    new int[][] {
                      new int[] {1, 5},
                      new int[] {4, 4}
@@ -165,10 +168,11 @@ namespace WarcabyApp.UnitTests.Services
     [Fact]
     public void KnowsHowToMakeAMove() {
       _board = new Board(6);
-      _board.SetPawnAt(3, 3, PawnColor.White);
-      _board.SetPawnAt(2, 2, PawnColor.Black);
-      _board.SetPawnAt(2, 4, PawnColor.Black);
-      var nextMove = _board.MovesFor(3, 3)[0];
+      var _field = new Field(3, 3);
+      _board.SetPawnAt(_field, PawnColor.White);
+      _board.SetPawnAt(new Field(2, 2), PawnColor.Black);
+      _board.SetPawnAt(new Field(2, 4), PawnColor.Black);
+      var nextMove = _board.MovesFor(_field)[0];
 
        Assert.Equal(
                    _board.rotateMatrix(),

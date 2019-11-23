@@ -6,11 +6,37 @@ namespace WarcabyApp
     public enum FieldColor { White, Black };
     public enum PawnColor { White, Black };
 
+    public class Field
+    {
+        public int X { get; set; }
+        public int Y { get; set; }
+
+        public Field(int x, int y)
+        {
+            this.X = x;
+            this.Y = y;
+        }
+
+        public Field(int[] pair) {
+            new Field(pair[0], pair[1]);
+        }
+
+        public override string ToString()
+        {
+            return $"({this.X},{this.Y})";
+        }
+
+        public FieldColor Color() {
+            return ((this.X % 2) != (this.Y % 2)) ? FieldColor.White : FieldColor.Black;
+        }
+    }
+
     public class Board
     {
         private readonly int DEFAULT_SIZE = 8;
         public int Size { get; }
         public string[,] Position { get; set; }
+        public PawnColor Turn { get; set; }
 
         public Board()
         {
@@ -18,6 +44,7 @@ namespace WarcabyApp
             this.Position = new string[this.Size, this.Size];
             this.ColorFields();
             this.PlaceStartingPawns(3);
+            this.Turn = PawnColor.White;
         }
 
         public Board(int n)
@@ -31,58 +58,62 @@ namespace WarcabyApp
             this.ColorFields();
         }
 
-        public void SetPawnAt(int x, int y, PawnColor color)
+        public void SetPawnAt(Field field, PawnColor color)
         {
-            if (x > this.Size - 1)
+            if (field.X > this.Size - 1)
             {
-                throw new System.ArgumentException($"{x} is out of board bounds {this.Size}x{this.Size}");
+                throw new System.ArgumentException($"{field.X} is out of board bounds {this.Size}x{this.Size}");
             }
-            if (y > this.Size - 1)
+            if (field.Y > this.Size - 1)
             {
-                throw new System.ArgumentException($"{y} is out of board bounds {this.Size}x{this.Size}");
+                throw new System.ArgumentException($"{field.Y} is out of board bounds {this.Size}x{this.Size}");
             }
-            if (this.Position[x, y] == "W" || this.Position[x, y] == "b")
+            if (this.Position[field.X, field.Y] == "W" || this.Position[field.X, field.Y] == "b")
             {
-                throw new System.ArgumentException($"({x},{y}) is already occupied by {this.Position[x, y]}");
+                throw new System.ArgumentException($"{field} is already occupied by {this.Position[field.X, field.Y]}");
             }
-            if (this.GetFieldColorAt(x, y) == FieldColor.White)
+            if (field.Color() == FieldColor.White)
             {
-                throw new System.ArgumentException($"({x},{y}) is white and pawns are allowed only on black fields");
+                throw new System.ArgumentException($"{field} is white and pawns are allowed only on black fields");
             }
 
             if (color == PawnColor.White)
             {
-                this.Position[x, y] = "W";
+                this.Position[field.X, field.Y] = "W";
             }
             else
             {
-                this.Position[x, y] = "b";
+                this.Position[field.X, field.Y] = "b";
             }
         }
 
         /**
           * Only returns valid moves for a pawn at (x,y)
           **/
-        public int[][] MovesFor(int x, int y) {
-            if (!this.IsInBounds(x, y) || !this.IsTaken(x, y)) {
-                return new int[][] { new int[] {} };
+        public int[][] MovesFor(Field field)
+        {
+
+            if (!this.IsInBounds(field) || !this.IsTaken(field))
+            {
+                return new int[][] { new int[] { } };
             }
 
-            int[][] possible = this.NextMovesFieldsOnTheBoard(x, y);
+            int[][] possible = this.NextMovesFieldsOnTheBoard(field);
 
             var moves = from pair in possible
                         where (
-                            this.IsInBounds(pair[0], pair[1]) && 
-                            this.GetFieldColorAt(pair[0], pair[1]) == FieldColor.Black &&
-                            (!this.IsTaken(pair[0], pair[1]) || 
-                            (this.IsTaken(pair[0], pair[1]) && this.CanCapture(x, y, pair[0], pair[1])))
+                            this.IsInBounds(new Field(pair)) &&
+                            new Field(pair).Color() == FieldColor.Black &&
+                            (!this.IsTaken(new Field(pair)) ||
+                            (this.IsTaken(new Field(pair)) && this.CanCapture(field, pair[0], pair[1])))
                         )
                         select pair;
 
-
-            foreach (var pair in moves) {
-                if (this.CanCapture(x, y, pair[0], pair[1])) {
-                    var newCoordinates = this.FindCapture(x, y, pair[0], pair[1]);
+            foreach (var pair in moves)
+            {
+                if (this.CanCapture(field, pair[0], pair[1]))
+                {
+                    var newCoordinates = this.FindCapture(field, pair[0], pair[1]);
                     pair[0] = newCoordinates[0];
                     pair[1] = newCoordinates[1];
                 }
@@ -96,52 +127,51 @@ namespace WarcabyApp
           * Does not check game rules (field needs to be black and on the board)
           * does not care about pices, captures, etc.
           **/
-        private int[][] NextMovesFieldsOnTheBoard(int x, int y) {
+        private int[][] NextMovesFieldsOnTheBoard(Field field)
+        {
             int[][] possible = {
-               new int[] { x - 1, y + 1 },
-               new int[] { x + 1, y + 1 }
+               new int[] { field.X - 1, field.Y + 1 },
+               new int[] { field.X + 1, field.Y + 1 }
            };
 
             var moves = from pair in possible
                         where (
-                            this.IsInBounds(pair[0], pair[1]) && 
-                            this.GetFieldColorAt(pair[0], pair[1]) == FieldColor.Black
+                            this.IsInBounds(new Field(pair)) && new Field(pair).Color() == FieldColor.Black
                         )
                         select pair;
 
-            return moves.ToArray();         
+            return moves.ToArray();
         }
 
-        public void MakeMove(int startX, int startY, int endX, int endY) {
+        public void MakeMove(int startX, int startY, int endX, int endY)
+        {
             var piece = this.Position[startX, startY];
+            if (piece == "W" && this.Turn == PawnColor.Black)
+            {
+                throw new System.ArgumentException("Can't make the move! It's BLACKS turn");
+            }
+            if (piece == "b" && this.Turn == PawnColor.White)
+            {
+                throw new System.ArgumentException("Can't make the move! It's WHITES turn");
+            }
+
             this.Position[startX, startY] = "."; // There was a piece here so black
             this.Position[endX, endY] = piece;
 
             // Handle capture
-            if (endY > startY + 1) {
-                var nextX = (endX < startX) ? (startX-1) : (startX+1);
+            if (endY > startY + 1)
+            {
+                var nextX = (endX < startX) ? (startX - 1) : (startX + 1);
                 this.Position[nextX, startY + 1] = ".";
             }
-        }
 
-        public FieldColor GetFieldColorAt(int x, int y)
-        {
-            if (x > this.Size - 1)
+            if (this.Turn == PawnColor.White)
             {
-                throw new System.ArgumentException($"{x} is out of board bounds {this.Size}x{this.Size}");
-            }
-            if (y > this.Size - 1)
-            {
-                throw new System.ArgumentException($"{y} is out of board bounds {this.Size}x{this.Size}");
-            }
-
-            if ((x % 2) != (y % 2))
-            {
-                return FieldColor.White;
+                this.Turn = PawnColor.Black;
             }
             else
             {
-                return FieldColor.Black;
+                this.Turn = PawnColor.White;
             }
         }
 
@@ -151,30 +181,31 @@ namespace WarcabyApp
             {
                 for (int j = 0; j < this.Size; j++)
                 {
-                    this.Position[i, j] = (this.GetFieldColorAt(i, j) == FieldColor.White) ? "_" : ".";
+                    this.Position[i, j] = (new Field(i, j).Color() == FieldColor.White) ? "_" : ".";
                 }
             }
         }
 
-        public string[,] rotateMatrix() {
+        public string[,] rotateMatrix()
+        {
             var reversed = new string[this.Size, this.Size];
             var N = this.Size;
-        for (int x = 0; x < N / 2; x++) 
-        { 
-            for (int y = x; y < N - x - 1; y++) 
-            { 
-                var temp = this.Position[x, y]; 
-                reversed[x, y] = this.Position[y, N - 1 - x]; 
-                reversed[y, N - 1 - x] = this.Position[N - 1 - x,  
-                                        N - 1 - y]; 
-                reversed[N - 1 - x,  
-                    N - 1 - y] = this.Position[N - 1 - y, x]; 
-                reversed[N - 1 - y, x] = temp; 
-            } 
-        } 
+            for (int x = 0; x < N / 2; x++)
+            {
+                for (int y = x; y < N - x - 1; y++)
+                {
+                    var temp = this.Position[x, y];
+                    reversed[x, y] = this.Position[y, N - 1 - x];
+                    reversed[y, N - 1 - x] = this.Position[N - 1 - x,
+                                            N - 1 - y];
+                    reversed[N - 1 - x,
+                        N - 1 - y] = this.Position[N - 1 - y, x];
+                    reversed[N - 1 - y, x] = temp;
+                }
+            }
 
-        return reversed;
-    } 
+            return reversed;
+        }
         public void PrintToOut(bool showCoordinates = false)
         {
             var rotated = this.rotateMatrix();
@@ -183,9 +214,12 @@ namespace WarcabyApp
                 for (int j = 0; j < this.Size; j++)
                 {
 
-                    if (showCoordinates) {
+                    if (showCoordinates)
+                    {
                         Console.Write($"{i},{j} = {rotated[i, j]}");
-                    } else {
+                    }
+                    else
+                    {
                         Console.Write(rotated[i, j]);
                     }
 
@@ -196,7 +230,7 @@ namespace WarcabyApp
             }
         }
 
-       public int Score(PawnColor color)
+        public int Score(PawnColor color)
         {
             int score = 0;
 
@@ -218,39 +252,50 @@ namespace WarcabyApp
             return score;
         }
 
-        private bool IsInBounds(int x, int y) {
-            return (x >= 0 && x < this.Size) && (y >= 0 && y < this.Size);
+        private bool IsInBounds(Field field)
+        {
+            return (field.X >= 0 && field.X < this.Size) && (field.Y >= 0 && field.Y < this.Size);
         }
 
-        private bool IsTaken(int x, int y) {
-            return this.Position[x, y] == "W" || this.Position[x, y] == "b";
+        private bool IsTaken(Field field)
+        {
+            return this.Position[field.X, field.Y] == "W" || this.Position[field.X, field.Y] == "b";
         }
 
-        private int[] FindCapture(int x, int y, int ox, int oy) {
-            if (!this.IsInBounds(ox, oy) || !this.IsTaken(ox, oy)) {
-                return new int[] {};
+        private int[] FindCapture(Field field, int ox, int oy)
+        {
+            var oField = new Field(ox, oy);
+            if (!this.IsInBounds(oField) || !this.IsTaken(oField))
+            {
+                return new int[] { };
             }
 
-            var possbile = this.NextMovesFieldsOnTheBoard(ox, oy);
+            var possbile = this.NextMovesFieldsOnTheBoard(oField);
             var possibleFromOXOY = from pair in possbile
-                        where (
-                            (pair[0] != x && pair[1] != y) && (pair[1] > oy) && (pair[0] != x)
-                        )
-                        select pair;
+                                   where (
+                                       (pair[0] != field.X && pair[1] != field.Y) && (pair[1] > oy) && (pair[0] != field.X)
+                                   )
+                                   select pair;
 
             var asArray = possibleFromOXOY.ToArray();
-            if (asArray.Length == 0) {
-                return new int[] {};
-            } else {
+            if (asArray.Length == 0)
+            {
+                return new int[] { };
+            }
+            else
+            {
                 return asArray[0];
             }
         }
 
-        private bool CanCapture(int x, int y, int ox, int oy) {
-            if (!this.IsInBounds(ox, oy) || !this.IsTaken(ox, oy)) {
+        private bool CanCapture(Field field, int ox, int oy)
+        {
+            var oField = new Field(ox, oy);
+            if (!this.IsInBounds(oField) || !this.IsTaken(oField))
+            {
                 return false;
             }
-            return this.FindCapture(x, y, ox, oy).Length > 0;
+            return this.FindCapture(field, ox, oy).Length > 0;
         }
 
         /**
@@ -262,9 +307,10 @@ namespace WarcabyApp
             {
                 for (int j = this.Size - 1; j >= this.Size - rows; j--)
                 {
-                    if (this.GetFieldColorAt(i, j) == FieldColor.Black)
+                    var field = new Field(i, j);
+                    if (field.Color() == FieldColor.Black)
                     {
-                        this.SetPawnAt(i, j, PawnColor.Black);
+                        this.SetPawnAt(field, PawnColor.Black);
                     }
                 }
             }
@@ -272,9 +318,10 @@ namespace WarcabyApp
             {
                 for (int j = 0; j < rows; j++)
                 {
-                    if (this.GetFieldColorAt(i, j) == FieldColor.Black)
+                    var field = new Field(i, j);
+                    if (field.Color() == FieldColor.Black)
                     {
-                        this.SetPawnAt(i, j, PawnColor.White);
+                        this.SetPawnAt(field, PawnColor.White);
                     }
                 }
             }

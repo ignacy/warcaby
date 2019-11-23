@@ -15,5 +15,18 @@ namespace WarcabyApp.UnitTests.Services
       Assert.Equal(3, _engine.Depth);
     }
 
+    [Fact]
+    public void EngineKnowsHowToHoldABoard() {
+      _engine = new Engine();
+      var _board = new Board();
+
+      _engine.StartingBoard = _board;
+
+      Assert.Equal(
+        12, _engine.StartingBoard.Score(PawnColor.Black)
+      );
+
+    }
+
   }
 }
