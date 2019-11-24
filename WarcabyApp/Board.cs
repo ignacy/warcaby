@@ -76,6 +76,14 @@ namespace WarcabyApp
             this.ColorFields();
         }
 
+        public Board(Board otherBoard, Field from, int toX, int toY)
+        {
+            this.Size = otherBoard.Size;
+            this.Position = (string[,]) otherBoard.Position.Clone();
+            this.Turn = otherBoard.Turn;
+            this.MakeMove(from.X, from.Y, toX, toY);
+        }
+
         public Dictionary<Field, int[][]> NextMoves()
         {
             var moves = new Dictionary<Field, int[][]>();
@@ -205,19 +213,17 @@ namespace WarcabyApp
             }
         }
 
-
-
         public void MakeMove(int startX, int startY, int endX, int endY)
         {
             var piece = this.Position[startX, startY];
-            if (piece == "W" && this.Turn == PawnColor.Black)
-            {
-                throw new System.ArgumentException("Can't make the move! It's BLACKS turn");
-            }
-            if (piece == "b" && this.Turn == PawnColor.White)
-            {
-                throw new System.ArgumentException("Can't make the move! It's WHITES turn");
-            }
+           // if (piece == "W" && this.Turn == PawnColor.Black)
+           // {
+           //     throw new System.ArgumentException($"Can't make the move ({startX}, {startY}) => ({endX}, {endY}) It's BLACKS turn");
+           // }
+           // if (piece == "b" && this.Turn == PawnColor.White)
+           // {
+           //     throw new System.ArgumentException($"Can't make the move ({startX}, {startY}) => ({endX}, {endY}) It's WHITES turn");
+           // }
 
             this.Position[startX, startY] = "."; // There was a piece here so black
             this.Position[endX, endY] = piece;
@@ -292,6 +298,10 @@ namespace WarcabyApp
 
                 Console.Write("\n");
             }
+        }
+
+        public int CurrentScore() {
+            return this.Score(this.Turn);
         }
 
         public int Score(PawnColor color)
