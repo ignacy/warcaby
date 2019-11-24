@@ -37,10 +37,10 @@ namespace WarcabyApp
 
         override public bool Equals(object other)
         {
-          var otherField = other as Field;
-          if (otherField == null)
-             return false;
-          return this.X == otherField.X && this.Y == otherField.Y;
+            var otherField = other as Field;
+            if (otherField == null)
+                return false;
+            return this.X == otherField.X && this.Y == otherField.Y;
         }
 
         override public int GetHashCode()
@@ -138,7 +138,7 @@ namespace WarcabyApp
                 return new int[][] { new int[] { } };
             }
 
-            int[][] possible = this.NextMovesFieldsOnTheBoard(field);
+            int[][] possible = this.NextMovesFieldsOnTheBoard(field, this.Position[field.X, field.Y]);
 
             var moves = from pair in possible
                         where (
@@ -174,12 +174,9 @@ namespace WarcabyApp
           * Does not check game rules (field needs to be black and on the board)
           * does not care about pices, captures, etc.
           **/
-        private int[][] NextMovesFieldsOnTheBoard(Field field)
+        private int[][] NextMovesFieldsOnTheBoard(Field field, string figure)
         {
-            int[][] possible = {
-               new int[] { field.X - 1, field.Y + 1 },
-               new int[] { field.X + 1, field.Y + 1 }
-           };
+            int[][] possible = this.GetPossibilitiesFor(figure, field);
 
             var moves = from pair in possible
                         where this.IsInBounds(new Field(pair))
@@ -188,6 +185,27 @@ namespace WarcabyApp
 
             return moves.ToArray();
         }
+
+
+        private int[][] GetPossibilitiesFor(string figure, Field field)
+        {
+            if (figure == "W")
+            {
+                return new int[][] {
+                    new int[] { field.X - 1, field.Y + 1 },
+                    new int[] { field.X + 1, field.Y + 1 }
+                };
+            }
+            else // (figure == "b")
+            {
+                return new int[][] {
+                    new int[] { field.X - 1, field.Y - 1 },
+                    new int[] { field.X + 1, field.Y - 1 }
+                };
+            }
+        }
+
+
 
         public void MakeMove(int startX, int startY, int endX, int endY)
         {
@@ -310,18 +328,34 @@ namespace WarcabyApp
 
         private int[] FindCapture(Field field, int ox, int oy)
         {
+
             var oField = new Field(ox, oy);
             if (!this.IsInBounds(oField) || !this.IsTaken(oField))
             {
                 return new int[] { };
             }
 
-            var possbile = this.NextMovesFieldsOnTheBoard(oField);
-            var possibleFromOXOY = from pair in possbile
-                                   where (
-                                       (pair[0] != field.X && pair[1] != field.Y) && (pair[1] > oy) && (pair[0] != field.X)
-                                   )
-                                   select pair;
+
+            var pawnKind = this.Position[field.X, field.Y];
+            var possbile = this.NextMovesFieldsOnTheBoard(oField, pawnKind);
+
+            int[][] possibleFromOXOY;
+
+            if (pawnKind == "W")
+            {
+                possibleFromOXOY = possbile.
+                Where(pair => !this.IsTaken(new Field(pair))).
+                Where(pair => (pair[0] != field.X && pair[1] != field.Y)).
+                Where(pair => (pair[1] > oy) && (pair[0] != field.X)).ToArray();
+            }
+            else
+            {
+                possibleFromOXOY = possbile.
+                Where(pair => !this.IsTaken(new Field(pair))).
+                Where(pair => (pair[0] != field.X && pair[1] != field.Y)).
+                Where(pair => (pair[1] < oy) && (pair[0] != field.X)).ToArray();
+            }
+
 
             var asArray = possibleFromOXOY.ToArray();
             if (asArray.Length == 0)
