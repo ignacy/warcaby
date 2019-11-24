@@ -5,12 +5,13 @@ using System.Collections.ObjectModel;
 
 namespace WarcabyApp
 {
-    public class Ply {
+    public class Ply : IComparable {
         public int level;
         public int fromX;
         public int fromY;
         public int toX;
         public int toY;
+        public int Score { get; }
 
         public Board boardAfterMove { get; }
 
@@ -20,12 +21,23 @@ namespace WarcabyApp
             this.fromY = y;
             this.toX = x2;
             this.toY = y2;
-            this.boardAfterMove = board;
+            this.Score = board.CurrentScore();
+            this.boardAfterMove = (Board) board.Clone();
         }
 
         public override string ToString()
         {
             return $"Ply level: {level} FROM({this.fromX},{this.fromY}) => TO({this.toX},{this.toY}), Score ({this.boardAfterMove.CurrentScore()})";
+        }
+
+        public int CompareTo(object obj) {
+            if (obj == null) return 1;
+
+            Ply otherPly = obj as Ply;
+            if (otherPly != null)
+                return this.Score.CompareTo(otherPly.Score);
+            else
+                throw new ArgumentException("Object is not a Ply");
         }
     }
 
@@ -33,14 +45,12 @@ namespace WarcabyApp
     {
         private readonly int DEFAULT_DEPTH = 4; // 4 Ply = 2 ruchy
         public int Depth { get; }
-        private int SearchedDepth;
         public Board StartingBoard { get; set; }
 
         public Engine(Board board)
         {
             this.Depth = DEFAULT_DEPTH;
-            this.SearchedDepth = 0;
-            this.StartingBoard = board;
+            this.StartingBoard = (Board) board.Clone();
         }
 
         public Dictionary<int, int[]> ScoreMoves()
@@ -48,9 +58,23 @@ namespace WarcabyApp
             var movesWithScores = new Dictionary<int, int[]>();
             var movesTree = new TreeNode<Ply>(new Ply(0, -1, -1, -1, -1, this.StartingBoard));
 
+            this.StartingBoard.PrintToOut();
             AddToTree(movesTree, 1);
-            movesTree.Print();
-            return movesWithScores; 
+            var top = movesTree.Minimax();
+
+            Console.WriteLine(top.Parent.Parent.Parent);
+            top.Parent.Parent.Parent.Value.boardAfterMove.PrintToOut();
+
+            Console.WriteLine(top.Parent.Parent);
+            top.Parent.Parent.Value.boardAfterMove.PrintToOut();
+
+            Console.WriteLine(top.Parent);
+            top.Parent.Value.boardAfterMove.PrintToOut();
+ 
+            Console.WriteLine(top);
+            top.Value.boardAfterMove.PrintToOut();
+
+           return movesWithScores; 
         }
 
         public void AddToTree(TreeNode<Ply> tree, int depth) {
@@ -64,7 +88,7 @@ namespace WarcabyApp
                 {
                     AddToTree(tree.AddChild(
                                  new Ply(depth, movesForPawn.Key.X, movesForPawn.Key.Y, move[0], move[1], 
-                                 new Board(StartingBoard, movesForPawn.Key, move[0], move[1]))), 
+                                 new Board(tree.Value.boardAfterMove, movesForPawn.Key, move[0], move[1]))), 
                         depth + 1);
                 }
             }
@@ -74,8 +98,8 @@ namespace WarcabyApp
 
         public class TreeNode<Ply>
         {
-            private readonly Ply _value;
-            private readonly List<TreeNode<Ply>> _children = new List<TreeNode<Ply>>();
+            private Ply _value;
+            private List<TreeNode<Ply>> _children = new List<TreeNode<Ply>>();
 
             public TreeNode(Ply value)
             {
@@ -85,6 +109,20 @@ namespace WarcabyApp
             public TreeNode<Ply> this[int i]
             {
                 get { return _children[i]; }
+            }
+
+            public TreeNode<Ply> Minimax(bool maxLevel = true) {
+                if (this.Children.Count == 0) {
+                    return this;
+                } 
+
+                if (maxLevel) {
+                    var max = this.Children.OrderBy(node => node._value).First();
+                    return max.Minimax(false);
+                } else {
+                    var min = this.Children.OrderByDescending(node => node._value).First();
+                    return min.Minimax(true);
+                }
             }
 
             public TreeNode<Ply> Parent { get; private set; }
@@ -126,6 +164,11 @@ namespace WarcabyApp
                 foreach (var child in _children)
                     child.Print();
              }
+
+            public override string ToString()
+            {
+                return _value.ToString();
+            }
 
             public IEnumerable<Ply> Flatten()
             {

@@ -10,7 +10,14 @@ namespace WarcabyApp
 
             Console.WriteLine("Current board position:");
 
-            var board = new Board();
+            var board = new Board(6);
+
+            board.SetPawnAt(new Field(2,2), PawnColor.Black);
+            board.SetPawnAt(new Field(2,4), PawnColor.Black);
+            board.SetPawnAt(new Field(3,3), PawnColor.White);
+            board.SetPawnAt(new Field(3,1), PawnColor.White);
+            board.SetPawnAt(new Field(4,2), PawnColor.White);
+
 
             //Console.WriteLine($"Turn to move {board.Turn}");
             //board.PrintToOut();

@@ -49,12 +49,17 @@ namespace WarcabyApp
         }
     }
 
-    public class Board
+    public class Board : ICloneable
     {
         private readonly int DEFAULT_SIZE = 8;
         public int Size { get; }
         public string[,] Position { get; set; }
         public PawnColor Turn { get; set; }
+
+        public object Clone()
+        {
+            return this.MemberwiseClone();
+        }
 
         public Board()
         {
@@ -79,7 +84,7 @@ namespace WarcabyApp
         public Board(Board otherBoard, Field from, int toX, int toY)
         {
             this.Size = otherBoard.Size;
-            this.Position = (string[,]) otherBoard.Position.Clone();
+            this.Position = otherBoard.Position.Clone() as string[,];
             this.Turn = otherBoard.Turn;
             this.MakeMove(from.X, from.Y, toX, toY);
         }
@@ -216,23 +221,30 @@ namespace WarcabyApp
         public void MakeMove(int startX, int startY, int endX, int endY)
         {
             var piece = this.Position[startX, startY];
-           // if (piece == "W" && this.Turn == PawnColor.Black)
-           // {
-           //     throw new System.ArgumentException($"Can't make the move ({startX}, {startY}) => ({endX}, {endY}) It's BLACKS turn");
-           // }
-           // if (piece == "b" && this.Turn == PawnColor.White)
-           // {
-           //     throw new System.ArgumentException($"Can't make the move ({startX}, {startY}) => ({endX}, {endY}) It's WHITES turn");
-           // }
+           /*  if (piece == "W" && this.Turn == PawnColor.Black)
+            {
+                throw new System.ArgumentException($"Can't make the move ({startX}, {startY}) => ({endX}, {endY}) It's BLACKS turn");
+            }
+            if (piece == "b" && this.Turn == PawnColor.White)
+            {
+                throw new System.ArgumentException($"Can't make the move ({startX}, {startY}) => ({endX}, {endY}) It's WHITES turn");
+            } */
 
             this.Position[startX, startY] = "."; // There was a piece here so black
             this.Position[endX, endY] = piece;
 
-            // Handle capture
+            // Handle capture for white
             if (endY > startY + 1)
             {
                 var nextX = (endX < startX) ? (startX - 1) : (startX + 1);
                 this.Position[nextX, startY + 1] = ".";
+            }
+
+            // Handle capture for black
+            if (endY < startY - 1)
+            {
+                var nextX = (endX < startX) ? (startX - 1) : (startX + 1);
+                this.Position[nextX, startY - 1] = ".";
             }
 
             if (this.Turn == PawnColor.White)
