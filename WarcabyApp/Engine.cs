@@ -6,6 +6,7 @@ using System.Collections.ObjectModel;
 namespace WarcabyApp
 {
     public class Ply {
+        public int level;
         public int fromX;
         public int fromY;
         public int toX;
@@ -13,7 +14,8 @@ namespace WarcabyApp
 
         public Board boardAfterMove { get; }
 
-        public Ply(int x, int y, int x2, int y2, Board board) {
+        public Ply(int level, int x, int y, int x2, int y2, Board board) {
+            this.level = level;
             this.fromX = x;
             this.fromY = y;
             this.toX = x2;
@@ -23,7 +25,7 @@ namespace WarcabyApp
 
         public override string ToString()
         {
-            return $"FROM({this.fromX},{this.fromY}) => TO({this.toX},{this.toY}), Score ({this.boardAfterMove.CurrentScore()})";
+            return $"Ply level: {level} FROM({this.fromX},{this.fromY}) => TO({this.toX},{this.toY}), Score ({this.boardAfterMove.CurrentScore()})";
         }
     }
 
@@ -44,7 +46,7 @@ namespace WarcabyApp
         public Dictionary<int, int[]> ScoreMoves()
         {
             var movesWithScores = new Dictionary<int, int[]>();
-            var movesTree = new TreeNode<Ply>(new Ply(-1, -1, -1, -1, this.StartingBoard));
+            var movesTree = new TreeNode<Ply>(new Ply(0, -1, -1, -1, -1, this.StartingBoard));
 
             AddToTree(movesTree, 1);
             movesTree.Print();
@@ -52,7 +54,7 @@ namespace WarcabyApp
         }
 
         public void AddToTree(TreeNode<Ply> tree, int depth) {
-            if (depth >= this.Depth) {
+            if (depth > this.Depth) {
                 return;
             }
 
@@ -61,7 +63,7 @@ namespace WarcabyApp
                 foreach (var move in movesForPawn.Value)
                 {
                     AddToTree(tree.AddChild(
-                                 new Ply(movesForPawn.Key.X, movesForPawn.Key.Y, move[0], move[1], 
+                                 new Ply(depth, movesForPawn.Key.X, movesForPawn.Key.Y, move[0], move[1], 
                                  new Board(StartingBoard, movesForPawn.Key, move[0], move[1]))), 
                         depth + 1);
                 }
@@ -118,11 +120,11 @@ namespace WarcabyApp
                     child.Traverse(action);
             }
 
-            public void Print(int level = 0)
+            public void Print()
             {
-                Console.WriteLine($"{level}: Ply: {Value}");
+                Console.WriteLine(_value);
                 foreach (var child in _children)
-                    child.Print(level + 1);
+                    child.Print();
              }
 
             public IEnumerable<Ply> Flatten()
