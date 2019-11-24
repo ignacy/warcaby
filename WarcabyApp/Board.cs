@@ -221,14 +221,14 @@ namespace WarcabyApp
         public void MakeMove(int startX, int startY, int endX, int endY)
         {
             var piece = this.Position[startX, startY];
-           /*  if (piece == "W" && this.Turn == PawnColor.Black)
+            if (piece == "W" && this.Turn == PawnColor.Black)
             {
                 throw new System.ArgumentException($"Can't make the move ({startX}, {startY}) => ({endX}, {endY}) It's BLACKS turn");
             }
             if (piece == "b" && this.Turn == PawnColor.White)
             {
                 throw new System.ArgumentException($"Can't make the move ({startX}, {startY}) => ({endX}, {endY}) It's WHITES turn");
-            } */
+            }
 
             this.Position[startX, startY] = "."; // There was a piece here so black
             this.Position[endX, endY] = piece;
