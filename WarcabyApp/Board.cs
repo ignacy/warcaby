@@ -18,7 +18,8 @@ namespace WarcabyApp
         }
 
         public Field(int[] pair) {
-            new Field(pair[0], pair[1]);
+            this.X = pair[0];
+            this.Y = pair[1];
         }
 
         public override string ToString()
@@ -92,7 +93,6 @@ namespace WarcabyApp
           **/
         public int[][] MovesFor(Field field)
         {
-
             if (!this.IsInBounds(field) || !this.IsTaken(field))
             {
                 return new int[][] { new int[] { } };
@@ -119,7 +119,11 @@ namespace WarcabyApp
                 }
             }
 
-            return moves.ToArray();
+            if (moves.Count() == 0) {
+                return new int[][] { new int[] { } };
+            } else {
+                return moves.ToArray();
+            }
         }
 
         /**
@@ -135,9 +139,8 @@ namespace WarcabyApp
            };
 
             var moves = from pair in possible
-                        where (
-                            this.IsInBounds(new Field(pair)) && new Field(pair).Color() == FieldColor.Black
-                        )
+                        where this.IsInBounds(new Field(pair))
+                        where new Field(pair).Color() == FieldColor.Black
                         select pair;
 
             return moves.ToArray();

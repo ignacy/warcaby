@@ -120,6 +120,23 @@ namespace WarcabyApp.UnitTests.Services
     }
 
     [Fact]
+    public void ThereIsNoMovingBack()
+    {
+      _board = new Board(2);
+      var _field = new Field(1, 1);
+      _board.SetPawnAt(_field, PawnColor.White);
+      Assert.Equal(
+                   new int[][] {
+                     new int[] {}
+                   },
+
+                   _board.MovesFor(_field)
+                   );
+
+    }
+
+
+    [Fact]
     public void GetValidMovesForAPawnInTheCorner()
     {
       _board = new Board(2);
