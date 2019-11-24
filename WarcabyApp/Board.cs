@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Collections.Generic;
 
 namespace WarcabyApp
 {
@@ -17,7 +18,8 @@ namespace WarcabyApp
             this.Y = y;
         }
 
-        public Field(int[] pair) {
+        public Field(int[] pair)
+        {
             this.X = pair[0];
             this.Y = pair[1];
         }
@@ -27,8 +29,23 @@ namespace WarcabyApp
             return $"({this.X},{this.Y})";
         }
 
-        public FieldColor Color() {
+        public FieldColor Color()
+        {
             return ((this.X % 2) != (this.Y % 2)) ? FieldColor.White : FieldColor.Black;
+        }
+
+
+        override public bool Equals(object other)
+        {
+          var otherField = other as Field;
+          if (otherField == null)
+             return false;
+          return this.X == otherField.X && this.Y == otherField.Y;
+        }
+
+        override public int GetHashCode()
+        {
+            return this.X.GetHashCode() + this.Y.GetHashCode();
         }
     }
 
@@ -57,6 +74,29 @@ namespace WarcabyApp
             this.Size = n;
             this.Position = new string[this.Size, this.Size];
             this.ColorFields();
+        }
+
+        public Dictionary<Field, int[][]> NextMoves()
+        {
+            var moves = new Dictionary<Field, int[][]>();
+            for (int i = 0; i < this.Size; i++)
+            {
+                for (int j = 0; j < this.Size; j++)
+                {
+                    var field = new Field(i, j);
+                    if ((this.Position[i, j] == "W" && this.Turn == PawnColor.White) ||
+                         (this.Position[i, j] == "b" && this.Turn == PawnColor.Black))
+                    {
+
+                        var pawnMoves = this.MovesFor(field);
+                        if (pawnMoves.Count() > 0 && pawnMoves[0].Length > 0)
+                        {
+                            moves.Add(field, pawnMoves);
+                        }
+                    }
+                }
+            }
+            return moves;
         }
 
         public void SetPawnAt(Field field, PawnColor color)
@@ -111,17 +151,20 @@ namespace WarcabyApp
 
             foreach (var pair in moves)
             {
+                // For now let's return first capture
                 if (this.CanCapture(field, pair[0], pair[1]))
                 {
                     var newCoordinates = this.FindCapture(field, pair[0], pair[1]);
-                    pair[0] = newCoordinates[0];
-                    pair[1] = newCoordinates[1];
+                    return new int[][] { newCoordinates };
                 }
             }
 
-            if (moves.Count() == 0) {
+            if (moves.Count() == 0)
+            {
                 return new int[][] { new int[] { } };
-            } else {
+            }
+            else
+            {
                 return moves.ToArray();
             }
         }
@@ -294,7 +337,8 @@ namespace WarcabyApp
         private bool CanCapture(Field field, int ox, int oy)
         {
             var oField = new Field(ox, oy);
-            if (!this.IsInBounds(oField) || !this.IsTaken(oField))
+            if (!this.IsInBounds(oField) || !this.IsTaken(oField) ||
+                (this.Position[field.X, field.Y] == this.Position[ox, oy]))
             {
                 return false;
             }

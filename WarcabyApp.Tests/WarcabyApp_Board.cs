@@ -1,5 +1,7 @@
-using System;
+using System.Collections;
+using System.Collections.Generic;
 using Xunit;
+using Xunit.Extensions;
 using WarcabyApp;
 
 namespace WarcabyApp.UnitTests.Services
@@ -176,8 +178,7 @@ namespace WarcabyApp.UnitTests.Services
       Assert.Equal(
                    _board.MovesFor(_field),
                    new int[][] {
-                     new int[] {1, 5},
-                     new int[] {4, 4}
+                     new int[] {1, 5}
                    }
                   );
     }
@@ -216,9 +217,33 @@ namespace WarcabyApp.UnitTests.Services
                      { ".", "_", ".", "_", ".", "_" }
                    }
                    );
-    
+    }
 
- 
+    [Fact]
+    public void ReturnAllPossibleMovesForTheSideWhichTurnItIs() {
+      _board = new Board(6);
+      var _field33 = new Field(3, 3);
+      var _field31 = new Field(3, 1);
+      var _field42 = new Field(4, 2);
+      _board.SetPawnAt(_field33, PawnColor.White);
+      _board.SetPawnAt(_field31, PawnColor.White);
+      _board.SetPawnAt(_field42, PawnColor.White);
+      _board.SetPawnAt(new Field(5, 5), PawnColor.White);
+      _board.SetPawnAt(new Field(2, 4), PawnColor.Black);
+      _board.SetPawnAt(new Field(2, 2), PawnColor.Black);
+      _board.Turn = PawnColor.White;
+      var nextMoves = _board.NextMoves();
+
+      var moves = new Dictionary<Field, int[][]>();
+
+      moves.Add(_field31, new int[][] { new int [] {1,3}});
+      moves.Add(_field33, new int[][] { new int [] {1,5}});
+      moves.Add(_field42, new int[][] { new int [] {5,3}});
+
+      Assert.Equal(nextMoves.Count, 3);
+      Assert.Equal(nextMoves[_field33], moves[_field33]);
+      Assert.Equal(nextMoves[_field42], moves[_field42]);
+      Assert.Equal(nextMoves[_field31], moves[_field31]);
     }
   }
 }
