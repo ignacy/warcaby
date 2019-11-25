@@ -11,7 +11,7 @@ namespace WarcabyApp
         public int fromY;
         public int toX;
         public int toY;
-        public int Score { get; }
+        public float Score { get; }
 
         public Board boardAfterMove { get; }
 

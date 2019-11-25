@@ -306,9 +306,9 @@ namespace WarcabyApp
             }
         }
 
-        public int CurrentScore() {
-            // We always score game for white
-            return this.Score(PawnColor.White);
+        public float CurrentScore() {
+            // Ocena to róznica pomiędzy liczba bialych i czarnych pionków
+            return this.Score(PawnColor.White) - this.Score(PawnColor.Black); 
         }
 
         public int Score(PawnColor color)
