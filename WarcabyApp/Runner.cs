@@ -51,7 +51,6 @@ namespace WarcabyApp
                 board.SetPawnAt(new Field(3, 1), PawnColor.White);
                 board.SetPawnAt(new Field(4, 2), PawnColor.White);
                 board.SetPawnAt(new Field(4, 0), PawnColor.White);
-
                 Graj(board);
 
                 Console.WriteLine("Symulacja 2 gra przeciwko sobie z tradycyjnej pozycji wyjsciowej 8x8");
@@ -62,19 +61,20 @@ namespace WarcabyApp
             else
             {
                 try
-                {  
+                {
                     System.IO.StreamReader file = new System.IO.StreamReader(@$"{args[0]}");
 
                     string line = file.ReadLine();
 
                     var fields = line.ToCharArray();
                     var size = fields.Length;
-                    var j = size-1;
+                    var j = size - 1;
 
                     var boardFromFile = new Board(size);
                     //boardFromFile.Turn = PawnColor.Black;
 
-                    for (int i=0; i<size; i++) {
+                    for (int i = 0; i < size; i++)
+                    {
                         boardFromFile.Position[i, j] = fields[i].ToString();
                     }
 
@@ -82,11 +82,12 @@ namespace WarcabyApp
                     {
                         fields = line.ToCharArray();
                         j -= 1;
-                        for (int i=0; i<size; i++) {
+                        for (int i = 0; i < size; i++)
+                        {
                             boardFromFile.Position[i, j] = fields[i].ToString();
                         }
                     }
-                    file.Close();  
+                    file.Close();
 
                     Console.WriteLine("Pozycja wczytana z pliku");
                     boardFromFile.PrintToOut();

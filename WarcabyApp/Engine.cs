@@ -139,7 +139,6 @@ namespace WarcabyApp
                         alpha = Math.Max(alpha, child.ScoreAlphaBeta(false, alpha, beta));
                         if (alpha >= beta)
                         {
-                            Console.WriteLine("Ciecie alfa");
                             return alpha;
                         }
                     }
@@ -149,7 +148,6 @@ namespace WarcabyApp
                         beta = Math.Min(beta, child.ScoreAlphaBeta(false, alpha, beta));
                         if (alpha >= beta)
                         {
-                            Console.WriteLine("Ciecie beta");
                             return beta;
                         }
                     }
