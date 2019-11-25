@@ -7,10 +7,9 @@ namespace WarcabyApp
         static void Main(string[] args)
         {
             Console.WriteLine("Welcome to Warcaby!!");
-
             Console.WriteLine("Current board position:");
 
-            var board = new Board();
+            var board = new Board(6);
 
             board.SetPawnAt(new Field(2,2), PawnColor.Black);
             board.SetPawnAt(new Field(2,4), PawnColor.Black);
@@ -27,19 +26,19 @@ namespace WarcabyApp
                 var engine = new Engine(board);
                 var bestMove = engine.ScoreMoves();
                 board = bestMove.boardAfterMove;
-                Console.WriteLine($"Ruch #{moves}");
+                Console.WriteLine($"Półruch: #{moves}");
                 Console.WriteLine(bestMove);
                 board.PrintToOut(); 
                 moves++;
             }
- 
-            /* foreach (var movesForPawn in board.NextMoves())
-            {
-                foreach (var move in movesForPawn.Value)
-                {
-                    Console.WriteLine($"{movesForPawn.Key.X}, {movesForPawn.Key.Y} => {move[0]}, {move[1]}");
+
+            if (board.IsGameOver()) {
+                if (board.Turn == PawnColor.Black) {
+                    Console.WriteLine("Koniec gry, wygrały białe");
+                } else {
+                    Console.WriteLine("Koniec gry, wygrały czarne");
                 }
-            } */
+            }
         }
     }
 }
