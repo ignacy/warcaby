@@ -54,7 +54,7 @@ namespace WarcabyApp
 
     public class Engine
     {
-        private readonly int DEFAULT_DEPTH = 4; // 2 Ply = 1 ruch
+        private readonly int DEFAULT_DEPTH = 6; // 2 Ply = 1 ruch
         public int Depth { get; }
         public Board StartingBoard { get; set; }
 
@@ -117,7 +117,7 @@ namespace WarcabyApp
                     return this;
                 }
 
-                var ordered = this.Children.OrderBy(node => node.Score(maxLevel));
+                var ordered = this.Children.OrderBy(node => node.ScoreAlphaBeta(maxLevel));
 
                 if (maxLevel)
                 {
@@ -127,6 +127,34 @@ namespace WarcabyApp
                 {
                     return ordered.First(); 
                 }
+            }
+
+            public int ScoreAlphaBeta(bool maxLevel, int alpha = -10000, int beta = 10000) {
+                if (this.Children.Count == 0) {
+                    return this.Value.boardAfterMove.CurrentScore();
+                }
+
+                if (maxLevel) {
+                    foreach (var child in this.Children) {
+                        alpha = Math.Max(alpha, child.ScoreAlphaBeta(false, alpha, beta));
+                        if (alpha >= beta)
+                        {
+                            return alpha;
+                        }
+                    }
+                    return alpha;
+                } else {
+                    foreach (var child in this.Children) {
+                        beta = Math.Min(beta, child.ScoreAlphaBeta(false, alpha, beta));
+                        if (alpha >= beta)
+                        {
+                            return beta;
+                        }
+                    }
+
+                    return beta;
+                }
+
             }
 
             public int Score(bool maxLevel) {
