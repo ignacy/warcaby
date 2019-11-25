@@ -35,7 +35,8 @@ namespace WarcabyApp
             }
             else
             {
-                return $"Ply level: {level} FROM({this.fromX},{this.fromY}) => TO({this.toX},{this.toY}), Score ({this.boardAfterMove.CurrentScore()})";
+                //return $"Ply level: {level} FROM({this.fromX},{this.fromY}) => TO({this.toX},{this.toY}), Expected Score ({this.boardAfterMove.CurrentScore()})";
+                return $"From ({this.fromX},{this.fromY}) => TO({this.toX},{this.toY})";
             }
         }
 
@@ -53,7 +54,7 @@ namespace WarcabyApp
 
     public class Engine
     {
-        private readonly int DEFAULT_DEPTH = 3; // 4 Ply = 2 ruchy
+        private readonly int DEFAULT_DEPTH = 4; // 2 Ply = 1 ruch
         public int Depth { get; }
         public Board StartingBoard { get; set; }
 
@@ -63,7 +64,7 @@ namespace WarcabyApp
             this.StartingBoard = (Board)board.Clone();
         }
 
-        public Dictionary<int, int[]> ScoreMoves()
+        public Ply ScoreMoves()
         {
             var movesWithScores = new Dictionary<int, int[]>();
             var movesTree = new TreeNode(new Ply(0, -1, -1, -1, -1, this.StartingBoard));
@@ -72,30 +73,7 @@ namespace WarcabyApp
 
             var root = movesTree.Root();
 
-            var top = root.Minimax();
-
-/*             if (root.IsRoot()) {
-                foreach (var v in root.Children.ToArray()) {
-                    Console.WriteLine(v);
-                }
-            }
-
- */
- 
- /* 
-            Console.WriteLine(top.Parent.Parent.Parent);
-            top.Parent.Parent.Parent.Value.boardAfterMove.PrintToOut();
-
-            Console.WriteLine(top.Parent.Parent);
-            top.Parent.Parent.Value.boardAfterMove.PrintToOut();
-
-            Console.WriteLine(top.Parent);
-            top.Parent.Value.boardAfterMove.PrintToOut(); */
-
-            Console.WriteLine(top);
-            top.Value.boardAfterMove.PrintToOut();
-
-            return movesWithScores;
+            return root.Minimax().Value;
         }
 
         public void AddToTree(TreeNode parent, int depth)
@@ -218,7 +196,7 @@ namespace WarcabyApp
 
             public void Print()
             {
-                Console.WriteLine($"{Value} Score = {this.Score(true)}");
+                Console.WriteLine($"{Value} Expected Score = {this.Score(true)}");
                 foreach (var child in Children)
                     child.Print();
             }

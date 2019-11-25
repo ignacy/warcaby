@@ -10,7 +10,7 @@ namespace WarcabyApp
 
             Console.WriteLine("Current board position:");
 
-            var board = new Board(6);
+            var board = new Board();
 
             board.SetPawnAt(new Field(2,2), PawnColor.Black);
             board.SetPawnAt(new Field(2,4), PawnColor.Black);
@@ -19,24 +19,20 @@ namespace WarcabyApp
             board.SetPawnAt(new Field(4,2), PawnColor.White);
             board.SetPawnAt(new Field(4,0), PawnColor.White);
 
+            board.PrintToOut();
+            int moves = 1;
 
-            //Console.WriteLine($"Turn to move {board.Turn}");
-            //board.PrintToOut();
 
-            //board.MakeMove(0, 2, 1, 3);
-
-            //Console.WriteLine("Current board position:");
-            //Console.WriteLine($"Turn to move {board.Turn}");
-            //board.PrintToOut();
-
-            //board.MakeMove(1, 5, 2, 4);
-            //Console.WriteLine("Current board position:");
-            //Console.WriteLine($"Turn to move {board.Turn}");
-            //board.PrintToOut();
-
-            var engine = new Engine(board);
-            Console.WriteLine(engine.ScoreMoves());
-
+            while (!board.IsGameOver() && moves < 100) {
+                var engine = new Engine(board);
+                var bestMove = engine.ScoreMoves();
+                board = bestMove.boardAfterMove;
+                Console.WriteLine($"Ruch #{moves}");
+                Console.WriteLine(bestMove);
+                board.PrintToOut(); 
+                moves++;
+            }
+ 
             /* foreach (var movesForPawn in board.NextMoves())
             {
                 foreach (var move in movesForPawn.Value)

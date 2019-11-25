@@ -89,6 +89,10 @@ namespace WarcabyApp
             this.MakeMove(from.X, from.Y, toX, toY);
         }
 
+        public bool IsGameOver() {
+            return this.NextMoves().Count == 0;
+        }
+
         public Dictionary<Field, int[][]> NextMoves()
         {
             var moves = new Dictionary<Field, int[][]>();
