@@ -11,7 +11,7 @@ namespace WarcabyApp
         public int fromY;
         public int toX;
         public int toY;
-        public float Score { get; }
+        public int Score { get; }
 
         public Board boardAfterMove { get; }
 
@@ -111,7 +111,7 @@ namespace WarcabyApp
                 get { return _children[i]; }
             }
 
-            public TreeNode<Ply> Minimax(bool maxLevel = true) {
+            public TreeNode<Ply> Minimax(bool maxLevel = false) {
                 if (this.Children.Count == 0) {
                     return this;
                 } 
