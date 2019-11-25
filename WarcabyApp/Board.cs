@@ -162,14 +162,8 @@ namespace WarcabyApp
                         )
                         select pair;
 
-            foreach (var pair in moves)
-            {
-                // For now let's return first capture
-                if (this.CanCapture(field, pair[0], pair[1]))
-                {
-                    var newCoordinates = this.FindCapture(field, pair[0], pair[1]);
-                    return new int[][] { newCoordinates };
-                }
+            if (moves.Where(pair => this.CanCapture(field, pair[0], pair[1])).Count() > 0) {
+                return moves.Where(pair => this.CanCapture(field, pair[0], pair[1])).Select(pair => this.FindCapture(field, pair[0], pair[1])).ToArray();
             }
 
             if (moves.Count() == 0)
@@ -313,7 +307,8 @@ namespace WarcabyApp
         }
 
         public int CurrentScore() {
-            return this.Score(this.Turn);
+            // We always score game for white
+            return this.Score(PawnColor.White);
         }
 
         public int Score(PawnColor color)
