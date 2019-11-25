@@ -72,7 +72,7 @@ namespace WarcabyApp
                     var j = size-1;
 
                     var boardFromFile = new Board(size);
-                    boardFromFile.Turn = PawnColor.Black;
+                    //boardFromFile.Turn = PawnColor.Black;
 
                     for (int i=0; i<size; i++) {
                         boardFromFile.Position[i, j] = fields[i].ToString();
