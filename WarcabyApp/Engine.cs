@@ -66,16 +66,23 @@ namespace WarcabyApp
         public Dictionary<int, int[]> ScoreMoves()
         {
             var movesWithScores = new Dictionary<int, int[]>();
-            var movesTree = new TreeNode<Ply>(new Ply(0, -1, -1, -1, -1, this.StartingBoard));
+            var movesTree = new TreeNode(new Ply(0, -1, -1, -1, -1, this.StartingBoard));
 
             AddToTree(movesTree, 1);
 
             var root = movesTree.Root();
 
-            Console.WriteLine($"ROOT MA {root.Children.Count} dzieci");
-
             var top = root.Minimax();
 
+/*             if (root.IsRoot()) {
+                foreach (var v in root.Children.ToArray()) {
+                    Console.WriteLine(v);
+                }
+            }
+
+ */
+ 
+ /* 
             Console.WriteLine(top.Parent.Parent.Parent);
             top.Parent.Parent.Parent.Value.boardAfterMove.PrintToOut();
 
@@ -83,7 +90,7 @@ namespace WarcabyApp
             top.Parent.Parent.Value.boardAfterMove.PrintToOut();
 
             Console.WriteLine(top.Parent);
-            top.Parent.Value.boardAfterMove.PrintToOut();
+            top.Parent.Value.boardAfterMove.PrintToOut(); */
 
             Console.WriteLine(top);
             top.Value.boardAfterMove.PrintToOut();
@@ -91,7 +98,7 @@ namespace WarcabyApp
             return movesWithScores;
         }
 
-        public void AddToTree(TreeNode<Ply> parent, int depth)
+        public void AddToTree(TreeNode parent, int depth)
         {
             if (depth > this.Depth)
             {
@@ -110,37 +117,54 @@ namespace WarcabyApp
         }
 
 
-        public class TreeNode<Ply>
+        public class TreeNode
         {
             private Ply _value;
-            private List<TreeNode<Ply>> _children = new List<TreeNode<Ply>>();
+            private List<TreeNode> _children = new List<TreeNode>();
 
             public TreeNode(Ply value)
             {
-                _value = value;
+                this._value = value;
             }
 
-            public TreeNode<Ply> this[int i]
+            public TreeNode this[int i]
             {
                 get { return _children[i]; }
             }
 
-            public TreeNode<Ply> Minimax(bool maxLevel = false)
+            public TreeNode Minimax(bool maxLevel = true)
             {
                 if (this.Children.Count == 0)
                 {
                     return this;
                 }
 
+                var ordered = this.Children.OrderBy(node => node.Score(maxLevel));
+
                 if (maxLevel)
                 {
-                    var max = this.Children.OrderBy(node => node._value).First();
-                    return max.Minimax(false);
+                    return ordered.Last();
                 }
                 else
                 {
-                    var min = this.Children.OrderByDescending(node => node._value).First();
-                    return min.Minimax(true);
+                    return ordered.First(); 
+                }
+            }
+
+            public int Score(bool maxLevel) {
+                if (this.Children.Count == 0) {
+                    return this.Value.boardAfterMove.CurrentScore();
+                }
+
+                var ordered = this.Children.OrderBy(node => node.Value.boardAfterMove.CurrentScore());
+
+                if (maxLevel)
+                {
+                    return ordered.Last().Score(false);
+                }
+                else
+                {
+                    return ordered.First().Score(true);
                 }
             }
 
@@ -149,9 +173,9 @@ namespace WarcabyApp
                 return this.Parent == null;
             }
 
-            public TreeNode<Ply> Parent { get; private set; }
+            public TreeNode Parent { get; private set; }
 
-            public TreeNode<Ply> Root()
+            public TreeNode Root()
             {
                 var node = this;
                 while (node.Parent != null)
@@ -163,24 +187,24 @@ namespace WarcabyApp
 
             public Ply Value { get { return _value; } }
 
-            public ReadOnlyCollection<TreeNode<Ply>> Children
+            public ReadOnlyCollection<TreeNode> Children
             {
                 get { return _children.AsReadOnly(); }
             }
 
-            public TreeNode<Ply> AddChild(Ply value)
+            public TreeNode AddChild(Ply value)
             {
-                var node = new TreeNode<Ply>(value) { Parent = this };
+                var node = new TreeNode(value) { Parent = this };
                 _children.Add(node);
                 return node;
             }
 
-            public TreeNode<Ply>[] AddChildren(params Ply[] values)
+            public TreeNode[] AddChildren(params Ply[] values)
             {
                 return values.Select(AddChild).ToArray();
             }
 
-            public bool RemoveChild(TreeNode<Ply> node)
+            public bool RemoveChild(TreeNode node)
             {
                 return _children.Remove(node);
             }
@@ -188,20 +212,20 @@ namespace WarcabyApp
             public void Traverse(Action<Ply> action)
             {
                 action(Value);
-                foreach (var child in _children)
+                foreach (var child in Children)
                     child.Traverse(action);
             }
 
             public void Print()
             {
-                Console.WriteLine(_value);
-                foreach (var child in _children)
+                Console.WriteLine($"{Value} Score = {this.Score(true)}");
+                foreach (var child in Children)
                     child.Print();
             }
 
             public override string ToString()
             {
-                return _value.ToString();
+                return Value.ToString();
             }
 
             public IEnumerable<Ply> Flatten()

@@ -1,0 +1,25 @@
+﻿<Properties StartupConfiguration="{0F0AB9E7-BB5C-4081-9BBB-24EB1DE3BF41}|Default">
+  <MonoDevelop.Ide.Workbench ActiveDocument="WarcabyApp/Engine.cs">
+    <Files>
+      <File FileName="WarcabyApp/Engine.cs" Line="125" Column="1" />
+    </Files>
+    <Pads>
+      <Pad Id="ProjectPad">
+        <State name="__root__">
+          <Node name="warcaby" expanded="True">
+            <Node name="WarcabyApp" expanded="True">
+              <Node name="Engine.cs" selected="True" />
+            </Node>
+          </Node>
+        </State>
+      </Pad>
+    </Pads>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.ItemProperties.WarcabyApp PreferredExecutionTarget="MonoDevelop.Default" />
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MultiItemStartupConfigurations />
+</Properties>

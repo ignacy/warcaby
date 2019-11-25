@@ -35,15 +35,15 @@ namespace WarcabyApp
             //board.PrintToOut();
 
             var engine = new Engine(board);
- //           Console.WriteLine(engine.ScoreMoves());
+            Console.WriteLine(engine.ScoreMoves());
 
-            foreach (var movesForPawn in board.NextMoves())
+            /* foreach (var movesForPawn in board.NextMoves())
             {
                 foreach (var move in movesForPawn.Value)
                 {
                     Console.WriteLine($"{movesForPawn.Key.X}, {movesForPawn.Key.Y} => {move[0]}, {move[1]}");
                 }
-            }
+            } */
         }
     }
 }
