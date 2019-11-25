@@ -14,7 +14,6 @@ namespace WarcabyApp.UnitTests.Services
       _engine = new Engine(_board);
 
       Assert.Equal(12, _engine.StartingBoard.Score(PawnColor.Black));
-      Assert.Equal(4, _engine.Depth);
     }
 
   }

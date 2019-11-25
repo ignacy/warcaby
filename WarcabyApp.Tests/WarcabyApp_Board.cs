@@ -243,11 +243,9 @@ namespace WarcabyApp.UnitTests.Services
 
             moves.Add(_field31, new int[][] { new int[] { 1, 3 } });
             moves.Add(_field33, new int[][] { new int[] { 1, 5 } });
-            moves.Add(_field42, new int[][] { new int[] { 5, 3 } });
 
             Assert.Equal(nextMoves.Count, 3);
             Assert.Equal(nextMoves[_field33], moves[_field33]);
-            Assert.Equal(nextMoves[_field42], moves[_field42]);
             Assert.Equal(nextMoves[_field31], moves[_field31]);
         }
 
@@ -272,11 +270,9 @@ namespace WarcabyApp.UnitTests.Services
             var moves = new Dictionary<Field, int[][]>();
 
             moves.Add(_field22, new int[][] { new int[] { 4,0 } });
-            moves.Add(_field24, new int[][] { new int[] { 1,3 } });
 
             Assert.Equal(2, nextMoves.Count);
             Assert.Equal(nextMoves[_field22], moves[_field22]);
-            Assert.Equal(nextMoves[_field24], moves[_field24]);
         }
     }
 }

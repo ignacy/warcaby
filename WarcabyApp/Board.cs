@@ -109,7 +109,33 @@ namespace WarcabyApp
                     }
                 }
             }
-            return moves;
+
+            bool CapturesPresent = false;
+            foreach (var movesForPawn in moves)
+            {
+                foreach (var move in movesForPawn.Value)
+                {
+                    if (Math.Abs(movesForPawn.Key.Y - move[1]) > 1)
+                    {
+                        CapturesPresent = true;
+                    }
+                }
+            }
+
+            if (CapturesPresent)
+            {
+                var onlyCaptures = new Dictionary<Field, int[][]>();
+                foreach (var movesForPawn in moves)
+                {
+                    foreach (var move in movesForPawn.Value)
+                    {
+                        onlyCaptures[movesForPawn.Key] = movesForPawn.Value.Where(pair => Math.Abs(movesForPawn.Key.Y - pair[1]) > 1).ToArray();
+                    }
+                }
+                return onlyCaptures;
+            } else {
+                return moves;
+            }
         }
 
         public void SetPawnAt(Field field, PawnColor color)
@@ -162,7 +188,8 @@ namespace WarcabyApp
                         )
                         select pair;
 
-            if (moves.Where(pair => this.CanCapture(field, pair[0], pair[1])).Count() > 0) {
+            if (moves.Where(pair => this.CanCapture(field, pair[0], pair[1])).Count() > 0)
+            {
                 return moves.Where(pair => this.CanCapture(field, pair[0], pair[1])).Select(pair => this.FindCapture(field, pair[0], pair[1])).ToArray();
             }
 
@@ -306,9 +333,10 @@ namespace WarcabyApp
             }
         }
 
-        public int CurrentScore() {
+        public int CurrentScore()
+        {
             // Ocena to róznica pomiędzy liczba bialych i czarnych pionków
-            return this.Score(PawnColor.White) - this.Score(PawnColor.Black); 
+            return this.Score(PawnColor.White) - this.Score(PawnColor.Black);
         }
 
         public int Score(PawnColor color)
