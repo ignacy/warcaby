@@ -14,7 +14,7 @@ namespace WarcabyApp
                 var engine = new Engine(board);
                 var bestMove = engine.ScoreMoves();
                 board = bestMove.boardAfterMove;
-                Console.WriteLine($"Półruch: #{moves}");
+                Console.WriteLine($"Ply: #{moves}");
                 Console.WriteLine(bestMove);
                 board.PrintToOut();
                 moves++;
@@ -24,11 +24,11 @@ namespace WarcabyApp
             {
                 if (board.Turn == PawnColor.Black)
                 {
-                    Console.WriteLine("Koniec gry, wygrały białe");
+                    Console.WriteLine("Game over. White won");
                 }
                 else
                 {
-                    Console.WriteLine("Koniec gry, wygrały czarne");
+                    Console.WriteLine("Game over. Black won");
                 }
             }
         }
@@ -39,9 +39,9 @@ namespace WarcabyApp
 
             if (args.Length == 0)
             {
-                Console.WriteLine("Brak parametrów odpalam obie symulacje");
+                Console.WriteLine("No params. Running 2 simulations");
 
-                Console.WriteLine("Symulacja 1 predefiniowana pozycja");
+                Console.WriteLine("Simulation #1: Predefined position");
 
                 var board = new Board(6);
 
@@ -53,7 +53,7 @@ namespace WarcabyApp
                 board.SetPawnAt(new Field(4, 0), PawnColor.White);
                 Graj(board);
 
-                Console.WriteLine("Symulacja 2 gra przeciwko sobie z tradycyjnej pozycji wyjsciowej 8x8");
+                Console.WriteLine("Simulation #2: Play against self from regular 8x8 position");
 
                 board = new Board();
                 Graj(board);
@@ -89,16 +89,16 @@ namespace WarcabyApp
                     }
                     file.Close();
 
-                    Console.WriteLine("Pozycja wczytana z pliku");
+                    Console.WriteLine("Position loaded from the file.");
                     boardFromFile.PrintToOut();
 
-                    Console.WriteLine("Rozgrywam pozycje z pliku");
+                    Console.WriteLine("Playing position from file.");
                     Graj(boardFromFile);
 
                 }
                 catch (IOException e)
                 {
-                    Console.WriteLine("Nie mozna wczytac pliku z pozycja");
+                    Console.WriteLine("Error while reading the file");
                     Console.WriteLine(e.Message);
                 }
             }
