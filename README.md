@@ -1,8 +1,10 @@
 ## Warcaby 
 
-minimax with alpha-beta pruning for simplified checkers
+An engine for simplified checkers using minimax with alpha-beta pruning.
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/X-ffV0w5l9Y" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+[![Example
+game](http://img.youtube.com/vi/X-ffV0w5l9Y/0.jpg)](http://www.youtube.com/watch?v=X-ffV0w5l9Y
+"Watch the engine play against itself here")
 
 ## Usage
 
