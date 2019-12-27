@@ -125,11 +125,11 @@ namespace WarcabyApp
                 }
                 else
                 {
-                    return ordered.First(); 
+                    return ordered.First();
                 }
             }
 
-            public int ScoreAlphaBeta(bool maxLevel, int alpha = -10000, int beta = 10000) {
+            public int ScoreAlphaBeta(bool maxLevel, int alpha = int.MinValue, int beta = int.MaxValue) {
                 if (this.Children.Count == 0) {
                     return this.Value.boardAfterMove.CurrentScore();
                 }
